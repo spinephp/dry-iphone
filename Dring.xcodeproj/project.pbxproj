@@ -146,6 +146,7 @@
 				TargetAttributes = {
 					1B8D3EB81E2D11C200A4A5CF = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = M3YZ7GN354;
 						ProvisioningStyle = Automatic;
 					};
 					1B8D3ECC1E2D11C200A4A5CF = {
@@ -337,6 +338,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = M3YZ7GN354;
 				INFOPLIST_FILE = Dring/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yrr8.Dring;
@@ -349,6 +351,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = M3YZ7GN354;
 				INFOPLIST_FILE = Dring/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yrr8.Dring;
