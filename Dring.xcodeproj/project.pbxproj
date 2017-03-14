@@ -8,13 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		1B2865E41E758E3A00D4751A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2865E31E758E3A00D4751A /* AppDelegate.swift */; };
-		1B2865E61E758E3A00D4751A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2865E51E758E3A00D4751A /* ViewController.swift */; };
-		1B2865E91E758E3A00D4751A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B2865E71E758E3A00D4751A /* Main.storyboard */; };
 		1B2865EC1E758E3A00D4751A /* Dring.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1B2865EA1E758E3A00D4751A /* Dring.xcdatamodeld */; };
 		1B2865EE1E758E3A00D4751A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B2865ED1E758E3A00D4751A /* Assets.xcassets */; };
-		1B2865F11E758E3A00D4751A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B2865EF1E758E3A00D4751A /* LaunchScreen.storyboard */; };
-		1B2865FC1E758E3A00D4751A /* DringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2865FB1E758E3A00D4751A /* DringTests.swift */; };
 		1B2866071E758E3A00D4751A /* DringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866061E758E3A00D4751A /* DringUITests.swift */; };
+		1B2866171E758EB100D4751A /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866161E758EB100D4751A /* DataController.swift */; };
+		1B28661C1E758F0000D4751A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B28661A1E758F0000D4751A /* Main.storyboard */; };
+		1B28661F1E758F2C00D4751A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B28661D1E758F2C00D4751A /* LaunchScreen.storyboard */; };
+		1B2866211E758F7100D4751A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1B2866201E758F7100D4751A /* Info.plist */; };
+		1B2866231E758FAE00D4751A /* DringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866221E758FAE00D4751A /* DringTests.swift */; };
+		1B28662F1E75956700D4751A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B28662E1E75956700D4751A /* ViewController.swift */; };
+		1BCDFC0C1E7829FE00F3E752 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDFC0B1E7829FE00F3E752 /* Network.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,18 +40,20 @@
 /* Begin PBXFileReference section */
 		1B2865E01E758E3A00D4751A /* Dring.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dring.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B2865E31E758E3A00D4751A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		1B2865E51E758E3A00D4751A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		1B2865E81E758E3A00D4751A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1B2865EB1E758E3A00D4751A /* Dring.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Dring.xcdatamodel; sourceTree = "<group>"; };
 		1B2865ED1E758E3A00D4751A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1B2865F01E758E3A00D4751A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		1B2865F21E758E3A00D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B2865F71E758E3A00D4751A /* DringTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B2865FB1E758E3A00D4751A /* DringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DringTests.swift; sourceTree = "<group>"; };
 		1B2865FD1E758E3A00D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B2866021E758E3A00D4751A /* DringUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DringUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B2866061E758E3A00D4751A /* DringUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DringUITests.swift; sourceTree = "<group>"; };
 		1B2866081E758E3A00D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1B2866161E758EB100D4751A /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = SOURCE_ROOT; };
+		1B28661B1E758F0000D4751A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1B28661E1E758F2C00D4751A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1B2866201E758F7100D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1B2866221E758FAE00D4751A /* DringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DringTests.swift; sourceTree = "<group>"; };
+		1B28662E1E75956700D4751A /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		1BCDFC0B1E7829FE00F3E752 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +84,7 @@
 		1B2865D71E758E3A00D4751A = {
 			isa = PBXGroup;
 			children = (
+				1BCDFC0B1E7829FE00F3E752 /* Network.swift */,
 				1B2865E21E758E3A00D4751A /* Dring */,
 				1B2865FA1E758E3A00D4751A /* DringTests */,
 				1B2866051E758E3A00D4751A /* DringUITests */,
@@ -99,13 +105,14 @@
 		1B2865E21E758E3A00D4751A /* Dring */ = {
 			isa = PBXGroup;
 			children = (
+				1B2866161E758EB100D4751A /* DataController.swift */,
 				1B2865E31E758E3A00D4751A /* AppDelegate.swift */,
-				1B2865E51E758E3A00D4751A /* ViewController.swift */,
-				1B2865E71E758E3A00D4751A /* Main.storyboard */,
+				1B28662E1E75956700D4751A /* ViewController.swift */,
+				1B28661A1E758F0000D4751A /* Main.storyboard */,
 				1B2865ED1E758E3A00D4751A /* Assets.xcassets */,
-				1B2865EF1E758E3A00D4751A /* LaunchScreen.storyboard */,
-				1B2865F21E758E3A00D4751A /* Info.plist */,
+				1B28661D1E758F2C00D4751A /* LaunchScreen.storyboard */,
 				1B2865EA1E758E3A00D4751A /* Dring.xcdatamodeld */,
+				1B2866201E758F7100D4751A /* Info.plist */,
 			);
 			path = Dring;
 			sourceTree = "<group>";
@@ -113,7 +120,7 @@
 		1B2865FA1E758E3A00D4751A /* DringTests */ = {
 			isa = PBXGroup;
 			children = (
-				1B2865FB1E758E3A00D4751A /* DringTests.swift */,
+				1B2866221E758FAE00D4751A /* DringTests.swift */,
 				1B2865FD1E758E3A00D4751A /* Info.plist */,
 			);
 			path = DringTests;
@@ -235,9 +242,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B2865F11E758E3A00D4751A /* LaunchScreen.storyboard in Resources */,
+				1B2866211E758F7100D4751A /* Info.plist in Resources */,
+				1B28661F1E758F2C00D4751A /* LaunchScreen.storyboard in Resources */,
+				1B28661C1E758F0000D4751A /* Main.storyboard in Resources */,
 				1B2865EE1E758E3A00D4751A /* Assets.xcassets in Resources */,
-				1B2865E91E758E3A00D4751A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,8 +270,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BCDFC0C1E7829FE00F3E752 /* Network.swift in Sources */,
+				1B2866171E758EB100D4751A /* DataController.swift in Sources */,
 				1B2865EC1E758E3A00D4751A /* Dring.xcdatamodeld in Sources */,
-				1B2865E61E758E3A00D4751A /* ViewController.swift in Sources */,
+				1B28662F1E75956700D4751A /* ViewController.swift in Sources */,
 				1B2865E41E758E3A00D4751A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,7 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B2865FC1E758E3A00D4751A /* DringTests.swift in Sources */,
+				1B2866231E758FAE00D4751A /* DringTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,18 +310,18 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1B2865E71E758E3A00D4751A /* Main.storyboard */ = {
+		1B28661A1E758F0000D4751A /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1B2865E81E758E3A00D4751A /* Base */,
+				1B28661B1E758F0000D4751A /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		1B2865EF1E758E3A00D4751A /* LaunchScreen.storyboard */ = {
+		1B28661D1E758F2C00D4751A /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1B2865F01E758E3A00D4751A /* Base */,
+				1B28661E1E758F2C00D4751A /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -507,6 +517,7 @@
 				1B28660D1E758E3A00D4751A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1B28660E1E758E3A00D4751A /* Build configuration list for PBXNativeTarget "DringTests" */ = {
 			isa = XCConfigurationList;
@@ -515,6 +526,7 @@
 				1B2866101E758E3A00D4751A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1B2866111E758E3A00D4751A /* Build configuration list for PBXNativeTarget "DringUITests" */ = {
 			isa = XCConfigurationList;
@@ -523,6 +535,7 @@
 				1B2866131E758E3A00D4751A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
