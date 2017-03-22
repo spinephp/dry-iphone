@@ -13,9 +13,42 @@ extension NSNumber {
     fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
 }
 
+var touchPoint = CGPoint(x:0,y:0)
+
+extension UIScrollView {
+    public func  touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        for touch: AnyObject in touches {
+            let t:UITouch = touch as! UITouch
+            //当在屏幕上连续拍动两下时，背景恢复为白色
+            if(t.tapCount == 2)
+            {
+                let point:CGPoint = (event.allTouches?.first?.location(in: self))!
+                Draw.removeSeeLine(x: point.x)
+            }
+                //当在屏幕上单击时，屏幕变为红色
+            else if(t.tapCount == 1)
+            {
+                let point:CGPoint = (event.allTouches?.first?.location(in: self))!
+                Draw.removeSeeLine(x: point.x)
+            }
+            print("event begin!")
+        }
+    }
+    public func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        self.next?.touchesMoved(touches as! Set<UITouch>, with: event)
+        let point:CGPoint = (event.allTouches?.first?.location(in: self))!
+        Draw.removeSeeLine(x: point.x)
+        Draw.drawSeeLine(x: point.x)
+    }
+    public func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+        self.next?.touchesEnded(touches as! Set<UITouch>, with: event)
+        
+    }
+}
+
 class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelegate,UIScrollViewDelegate{
     var vmPicker:UIView!
-    
+    static var lbLoading:UILabel!
     var pickerView: UIPickerView!
     var scrollView: UIScrollView!
     var btnPicker: UIButton!
@@ -25,209 +58,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var scrollPos:CGFloat = 0.0
     var scrollStartPoint:CGPoint!
     var viewBounds:CGRect!
-    var moveTextLayers:[CATextLayer] = []
-    var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0)]
-    
-    var drawGrad:Bool = true
-    
-    /*
-     * 在给定区域绘制字符串
-     */
-    func drawText(x:CGFloat,y:CGFloat,width:CGFloat,height:CGFloat,s:String)->Void{
-        let tLayer=CATextLayer()
-        tLayer.frame=CGRect(x:x, y:y, width:width, height:height)
-        tLayer.string = s
-        let fontName:CFString = "Noteworthy-Light" as CFString
-        tLayer.font = CTFontCreateWithName(fontName, 9.0, nil)
-        tLayer.fontSize = 9.0
-        tLayer.foregroundColor = UIColor.black.cgColor
-        tLayer.contentsScale = UIScreen.main.scale
-        tLayer.alignmentMode = kCAAlignmentRight
-        view.layer.addSublayer(tLayer)
-    }
-    
-    /*
-     * 在给定区域绘制字符串
-     */
-    func drawMoveText(tLayer:CATextLayer,x:CGFloat,y:CGFloat,width:CGFloat,height:CGFloat,s:String)->Void{
-        tLayer.frame=CGRect(x:x, y:y, width:width, height:height)
-        tLayer.string = s
-        view.layer.addSublayer(tLayer)
-    }
-    
-    /*
-     * 画 frame 控件外框
-     */
-    func drawFrame(x:CGFloat,y:CGFloat,width:CGFloat,height:CGFloat,stringWidth:CGFloat)->Void{
-        let layer=CAShapeLayer()
-        layer.frame=CGRect(x:x, y:y, width:width, height:height)
-        
-        //利用UIBezierPath绘制简单的矩形
-        let path=UIBezierPath()
-        path.move(to: CGPoint(x:0,y:0))
-        path.addLine(to: CGPoint(x:5,y:0))
-        path.move(to: CGPoint(x:5+stringWidth,y:0))
-        path.addLine(to: CGPoint(x:layer.frame.width,y:0))
-        path.addLine(to: CGPoint(x:layer.frame.width,y:layer.frame.height))
-        path.addLine(to: CGPoint(x:0,y:layer.frame.height))
-        path.addLine(to: CGPoint(x:0,y:0))
-        layer.path=path.cgPath
-        //填充颜色
-        layer.fillColor=UIColor.clear.cgColor
-        //边框颜色
-        layer.strokeColor=UIColor.black.cgColor
-        view.layer.addSublayer(layer)
-    }
-    
-    // 画水平线及座标
-    func drawVCoord(rect:CGRect)->Void{
-        let layer:[(CAShapeLayer,UIBezierPath,CGFloat)]=[(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),0.8)]
-        for item in layer{
-            item.0.frame=CGRect(x:0, y:25, width:rect.width, height:rect.height-25-50)
-        }
-        //layer.backgroundColor=UIColor.black.cgColor
-        //view.layer.addSublayer(layer)
-        
-        //利用UIBezierPath绘制简单的矩形
-        layer[0].1.move(to: CGPoint(x:0,y:0))
-        layer[0].1.addLine(to: CGPoint(x:layer[0].0.frame.width,y:0))
-        layer[0].1.addLine(to: CGPoint(x:layer[0].0.frame.width,y:layer[0].0.frame.height))
-        layer[0].1.addLine(to: CGPoint(x:0,y:layer[0].0.frame.height))
-        layer[0].1.addLine(to: CGPoint(x:0,y:0))
-        
-        // 绘图区域高度
-        let coordHeight = layer[0].0.frame.height - 30
-        
-        // 座标线间隔
-        let coordSpace:Int = Int(coordHeight / 22.0)
-        var n = -50
-        let maxY = layer[0].0.frame.minX + coordHeight-1
-        let frameLeft:CGFloat = 30.0
-        let x = frameLeft
-        
-        // 座标刻线长度
-        var x0:CGFloat
-        
-        // 画垂直座标轴
-        for i in 0...22{
-            let y0 = maxY - CGFloat(i * coordSpace)
-            if (n % 50 == 0){
-                x0 = 8
-                
-                if (n >= -50){
-                    layer[0].1.move(to: CGPoint(x:x, y:y0))
-                    layer[0].1.addLine(to: CGPoint(x:rect.width,y:y0))
-                }
-                
-                // 绘制垂直座标轴刻度值
-                drawText(x: x-frameLeft, y: y0+17, width: frameLeft-10, height: 12, s: "\(n)")
-            }else{
-                x0 = 5
-                layer[1].1.move(to: CGPoint(x:x, y:y0))
-                layer[1].1.addLine(to: CGPoint(x:rect.width,y:y0))
-            }
-            
-            // 画垂直座标轴刻线
-            layer[0].1.move(to: CGPoint(x:x-x0, y:y0))
-            layer[0].1.addLine(to: CGPoint(x:x,y:y0))
-            
-            n += 10
-        }
-        layer[0].1.move(to:CGPoint(x:frameLeft,y:0))
-        layer[0].1.addLine(to:CGPoint(x:frameLeft,y:maxY))
-        //path.move(to:CGPoint(x:frameLeft,y:layer.frame.height))
-        //path.addLine(to:CGPoint(x:frameLeft,y:layer.frame.height))
-        
-        // 绘制垂直座标轴单位
-        drawText(x: x-frameLeft, y: layer[0].0.frame.minY, width: frameLeft-10, height: 12, s: "℃")
-        for item in layer{
-            item.0.path=item.1.cgPath
-            //填充颜色
-            item.0.fillColor=UIColor.clear.cgColor
-            //边框颜色
-            let color:CGFloat = item.2
-            item.0.strokeColor=UIColor.init(red: color, green: color, blue: color, alpha: 1.0).cgColor
-            view.layer.addSublayer(item.0)
-        }
-    }
-    
-    /*
-     * 绘制网格线
-     * @param dx - int ,指定滚动棒位置
-     * @return void
-     */
-    func drawGrad(dx:Int,rect:CGRect)->Void {
-        if drawGrad {
-            for moveLayer in moveLayers{
-                let theLayer = moveLayer.0
-                moveLayer.1.removeAllPoints()
-                theLayer.frame=CGRect(x:0, y:25, width:rect.width, height:rect.height-20-50)
-                if (view.layer.sublayers?.contains(theLayer))!{
-                    theLayer.removeFromSuperlayer()
-                }
-                
-            }
-            for moveLayer in moveTextLayers{
-                moveLayer.removeFromSuperlayer()
-            }
-            
-            // 绘图区域高度
-            let coordHeight = moveLayers[0].0.frame.height - 30
-            
-            // 座标线间隔
-            //let coordSpace:Int = Int(coordHeight / 22.0)
-            //var n = -50
-            let maxY = moveLayers[0].0.frame.minX + coordHeight-1
-            let frameLeft:CGFloat = 30.0
-            let x = frameLeft
-            let times = Int(moveLayers[0].0.frame.width/60)
-            let startValue = dx%60
-            
-            // 绘制网格垂直线
-            for i in 0...times {
-                if moveTextLayers.count < i+1 {
-                    // 水平刻度值 CATextLayer
-                    let tLayer = CATextLayer()
-                    let fontName:CFString = "Noteworthy-Light" as CFString
-                    tLayer.font = CTFontCreateWithName(fontName, 9.0, nil)
-                    tLayer.fontSize = 9.0
-                    tLayer.foregroundColor = UIColor.black.cgColor
-                    tLayer.contentsScale = UIScreen.main.scale
-                    tLayer.alignmentMode = kCAAlignmentCenter
-                    
-                    moveTextLayers.append(tLayer)
-                }
-                
-                let xe = CGFloat(i*60-startValue)
-                if xe > 0 {
-                    moveLayers[0].1.move(to: CGPoint(x:x+xe, y:0))
-                    moveLayers[0].1.addLine(to: CGPoint(x:x+xe,y:maxY))
-                    
-                    let time = dx/60+i
-                    let sHour = String(format:"%2d",time/6)
-                    let sMinute = String(format:"%02d",(time%6)*10)
-                    let s = "\(sHour):\(sMinute)"
-                    
-                    // 绘制垂直座标轴刻度值
-                    drawMoveText(tLayer:moveTextLayers[i], x: x+xe-20, y: maxY+25, width: 40, height: 12, s: "\(s)")
-                }
-            }
-            
-            for moveLayer in moveLayers{
-                let layer1:CAShapeLayer = moveLayer.0
-                
-                layer1.path=moveLayer.1.cgPath
-                //填充颜色
-                layer1.fillColor=UIColor.white.cgColor
-                //边框颜色
-                let color:CGFloat = moveLayer.2
-                let acolor = UIColor.init(red: color, green: color, blue: color, alpha: 1.0)
-                layer1.strokeColor=acolor.cgColor
-                
-                view.layer.addSublayer(layer1)
-            }
-        }
-    }
     
     func getContext () -> NSManagedObjectContext {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -237,15 +67,17 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        Draw.view = self.view
+        
         //获取屏幕大小（不包括状态栏高度）
         viewBounds = CGRect(x:0,y:20,
                             width:UIScreen.main.bounds.width,
                             height:UIScreen.main.bounds.height-20)
-        drawVCoord(rect: viewBounds)
-        drawGrad(dx:0,rect: viewBounds)
-        drawFrame(x:6,y:viewBounds.midY+viewBounds.height-253,width:102,height:55,stringWidth:65)
-        drawFrame(x:128,y:viewBounds.midY+viewBounds.height-253,width:112,height:55,stringWidth:35)
-        drawFrame(x:260,y:viewBounds.midY+viewBounds.height-253,width:123,height:55,stringWidth:35)
+        Draw.vCoord(rect: viewBounds)
+        Draw.grad(dx:0,rect: viewBounds)
+        Draw.frame(x:6,y:viewBounds.midY+viewBounds.height-253,width:102,height:55,stringWidth:65)
+        Draw.frame(x:128,y:viewBounds.midY+viewBounds.height-253,width:112,height:55,stringWidth:35)
+        Draw.frame(x:260,y:viewBounds.midY+viewBounds.height-253,width:123,height:55,stringWidth:35)
         
         scrollView = UIScrollView(frame:viewBounds)
         
@@ -265,6 +97,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             self.dryingRecord.removeAll()
             for item in result!{
                 self.dryingRecord.append(item)
+            }
+            for item in self.view.subviews{
+                if item.tag==101{
+                    let btn = item as! UIButton
+                    let s = ((result?.count)!>0) ? "请选择干燥记录" : "无"
+                    btn.setTitle(s, for: .normal)
+                }
             }
         }, failure: {(error) in
             print(error)
@@ -368,9 +207,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     
     func scrollViewDidScroll(_ scrollView:UIScrollView){
         /* 当用户滚动或拖动时触发 */
-        drawGrad(dx:Int(scrollView.contentOffset.x),rect: viewBounds)
+        Draw.grad(dx:Int(scrollView.contentOffset.x),rect: viewBounds)
         
-        //scrollStartPoint = UIEvent.tou mouseLocation()
+        //scrgollStartPoint = UIEvent.tou mouseLocation()
     }
     
     func scrollViewDidEndDecelerating(_ scrollView:UIScrollView){
@@ -395,6 +234,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
         else if btnPicker.tag==101 {
             btnPicker.setTitle(dryingRecord[valuePicker]["starttime"] as! String?, for:.normal)
+            ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
+            ViewController.lbLoading.text = "Loading..."
+            self.view.addSubview(ViewController.lbLoading)
             DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
         }
         //cancelPickerViewValue(sender: <#T##UIButton#>)
@@ -408,6 +250,17 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         //pickerView.removeFromSuperview()
         //sender.removeFromSuperview()
         vmPicker.removeFromSuperview()
+    }
+    
+    // selector是这样的
+    func testNoti(noti: Notification) {
+        ViewController.lbLoading.removeFromSuperview()
+        var t = noti.userInfo!
+        let t1 = t.popFirst()
+        
+        let datas = DataController(name:t1?.value as! String).findAll()
+        
+        print(noti)
     }
     
 }

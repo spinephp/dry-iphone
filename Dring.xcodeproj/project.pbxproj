@@ -17,6 +17,8 @@
 		1B2866211E758F7100D4751A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1B2866201E758F7100D4751A /* Info.plist */; };
 		1B2866231E758FAE00D4751A /* DringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866221E758FAE00D4751A /* DringTests.swift */; };
 		1B28662F1E75956700D4751A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B28662E1E75956700D4751A /* ViewController.swift */; };
+		1BA166771E7CF6AF00203C09 /* draw.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA166761E7CF6AF00203C09 /* draw.swift */; };
+		1BADFEC31E7AB3B400CCB742 /* DryDataRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BADFEC21E7AB3B400CCB742 /* DryDataRefresh.swift */; };
 		1BCDFC0C1E7829FE00F3E752 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDFC0B1E7829FE00F3E752 /* Network.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +55,8 @@
 		1B2866201E758F7100D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1B2866221E758FAE00D4751A /* DringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DringTests.swift; sourceTree = "<group>"; };
 		1B28662E1E75956700D4751A /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		1BA166761E7CF6AF00203C09 /* draw.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = draw.swift; sourceTree = "<group>"; };
+		1BADFEC21E7AB3B400CCB742 /* DryDataRefresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DryDataRefresh.swift; sourceTree = "<group>"; };
 		1BCDFC0B1E7829FE00F3E752 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +110,8 @@
 			isa = PBXGroup;
 			children = (
 				1B2866161E758EB100D4751A /* DataController.swift */,
+				1BA166761E7CF6AF00203C09 /* draw.swift */,
+				1BADFEC21E7AB3B400CCB742 /* DryDataRefresh.swift */,
 				1B2865E31E758E3A00D4751A /* AppDelegate.swift */,
 				1B28662E1E75956700D4751A /* ViewController.swift */,
 				1B28661A1E758F0000D4751A /* Main.storyboard */,
@@ -203,6 +209,7 @@
 				TargetAttributes = {
 					1B2865DF1E758E3A00D4751A = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = M3YZ7GN354;
 						ProvisioningStyle = Automatic;
 					};
 					1B2865F61E758E3A00D4751A = {
@@ -271,9 +278,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BCDFC0C1E7829FE00F3E752 /* Network.swift in Sources */,
+				1BADFEC31E7AB3B400CCB742 /* DryDataRefresh.swift in Sources */,
 				1B2866171E758EB100D4751A /* DataController.swift in Sources */,
 				1B2865EC1E758E3A00D4751A /* Dring.xcdatamodeld in Sources */,
 				1B28662F1E75956700D4751A /* ViewController.swift in Sources */,
+				1BA166771E7CF6AF00203C09 /* draw.swift in Sources */,
 				1B2865E41E758E3A00D4751A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -424,6 +433,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = M3YZ7GN354;
 				INFOPLIST_FILE = Dring/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yrr8.Dring;
@@ -436,6 +446,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = M3YZ7GN354;
 				INFOPLIST_FILE = Dring/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yrr8.Dring;

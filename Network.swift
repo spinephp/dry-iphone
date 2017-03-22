@@ -37,7 +37,7 @@ class Network{
                 for (tab, result) in response.allHeaderFields {
                     print("\(tab.description) - \(result)")
                 }
-                if response.statusCode == 200 {
+                if response.statusCode == 200 && (data != nil){
                     //JSON解析， 做逻辑
                     let responseStr = String(data: data!,
                                              encoding: String.Encoding.utf8)
