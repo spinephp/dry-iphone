@@ -13,13 +13,13 @@ class Draw{
     static var view:UIView? = nil
     static var drawGrad:Bool = true
     static var moveTextLayers:[CATextLayer] = []
-    static var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0)]
+    static var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0)]
     static var frameLeft = 30
     static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 30
     static var scrollX = 0
     static var scale = 1
-    static var space = 0
-    static var xSpace = 0
+    static var coordSpace = 0 // 温度标尺间隔
+    static var xSpace = 0 //时间标尺间隔
     static var current_point = [0,0,0]
     
     var ruleTemperatureWidt:Int
@@ -125,7 +125,7 @@ class Draw{
         let coordHeight = layer[0].0.frame.height - 30
         
         // 座标线间隔
-        let coordSpace:Int = Int(coordHeight / 22.0)
+        coordSpace = Int(coordHeight / 22.0)
         var n = -50
         let maxY = layer[0].0.frame.minX + coordHeight-1
         let frameLeft:CGFloat = 30.0
@@ -226,6 +226,7 @@ class Draw{
                     Draw.moveLayers[0].1.move(to: CGPoint(x:xe, y:0))
                     Draw.moveLayers[0].1.addLine(to: CGPoint(x:xe,y:maxY))
                     
+                    xSpace = 60 // 每像素10秒，10分钟=60个像素，画一短标尺
                     let time = dx/60+i //每像素10秒，10分钟=60个像素，画一短标尺
                     let sHour = String(format:"%2d",time/6)
                     let sMinute = String(format:"%02d",(time%6)*10)
@@ -272,30 +273,38 @@ class Draw{
     }
     
     // 画温度线
-    static func temperature(recs:[(id:Int,time:Int,settingtemperature:Int16,temperature:Int16)])->Void{
-        Draw.moveLayers[2].0.lineWidth = 1
+    static func temperature(recs:NSMutableArray)->Void{
+        Draw.moveLayers[3].0.lineWidth = 1
+        Draw.moveLayers[3].0.strokeColor = UIColor.red.cgColor
+        Draw.moveLayers[4].0.lineWidth = 1
+        Draw.moveLayers[4].0.strokeColor = UIColor.blue.cgColor
         let rote = scale*60/xSpace
         var x:Int = 0
         var y:Int = 0
         var y1:Int = 0
-        for (i,rec) in recs.enumerated().filter({$1.time > scrollX*rote}){
-            let t:Int = Int(rec.temperature >> 4)
-            let t1:Int = Int(rec.settingtemperature >> 4)
-            x = rec.time/rote-scrollX+frameLeft
-            y = frameHeight-(t+50)*space/10
-            y1 = frameHeight-(t1+50)*space/10
+        for (i,rec) in recs.enumerated(){//.filter({(($1 as! Dictionary<String, Any>)["time"]) as! Int) > scrollX*rote}){
+            let r = rec as! Dictionary<String, Any>
+            let t:Int = Int((r["temperature"] as! Int) >> 4)
+            let t1:Int = Int((r["settingtemperature"] as! Int) >> 4)
+            x = (r["time"] as! Int)/rote-scrollX+frameLeft
+            y = frameHeight-(t+50)*coordSpace/10
+            y1 = frameHeight-(t1+50)*coordSpace/10
             let pt = CGPoint(x:x,y:y)
             let pt1 = CGPoint(x:x,y:y1)
             if i > 0{
-                Draw.moveLayers[2].1.addLine(to: pt)
-                Draw.moveLayers[3].1.addLine(to: pt1)
+                Draw.moveLayers[3].1.addLine(to: pt)
+                Draw.moveLayers[4].1.addLine(to: pt1)
             }else{
-                Draw.moveLayers[2].1.move(to: pt)
-                Draw.moveLayers[3].1.move(to: pt1)
+                Draw.moveLayers[3].1.move(to: pt)
+                Draw.moveLayers[4].1.move(to: pt1)
             
             }
         }
         current_point = [x,y,y1]
+        Draw.moveLayers[3].0.path=Draw.moveLayers[3].1.cgPath
+        Draw.view?.layer.addSublayer(Draw.moveLayers[3].0)
+        Draw.moveLayers[4].0.path=Draw.moveLayers[4].1.cgPath
+        Draw.view?.layer.addSublayer(Draw.moveLayers[4].0)
     }
     
    /*

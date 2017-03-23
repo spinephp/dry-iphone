@@ -84,6 +84,21 @@ class DataController: NSObject {
         return (keys)
     }
     
+    
+    func removeAll()-> Void {
+        //let fetchRequest = NSFetchRequest<DryData>(entityName: self.name)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: self.name)
+        do {
+            let ctx = ViewController().getContext()
+            var searchResults = try ctx.fetch(fetchRequest)
+            for p in (searchResults ){
+                ctx.delete(p as! NSManagedObject)
+            }
+        } catch  {
+            print(error)
+        }
+    }
+    
     func findAll()-> NSMutableArray {
         //let fetchRequest = NSFetchRequest<DryData>(entityName: self.name)
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: self.name)
@@ -93,14 +108,11 @@ class DataController: NSObject {
             print("numbers of \(searchResults.count)")
             
             for p in (searchResults ){
-                //var model = (id:"",time:0,settingtemperature:0,temperature:0,mode:0)
-                
-                //model.id = p.value(forKey: "id")! as! String
-                //model.time = p.value(forKey: "time")! as! Int
-                //model.id = p.value(forKey: "id")! as! String
-                //model.id = p.value(forKey: "id")! as! String
-                //model.id = p.value(forKey: "id")! as! String
-                
+                var model:[String:Any] = [:]
+                for attribute in attributes(){
+                    model[attribute] = (p as AnyObject).value(forKey: attribute)
+                }
+                resListData.add(model)
                 print("id:  \((p as AnyObject).value(forKey: "id")!) time: \((p as AnyObject).value(forKey: "time")!) temperature: \((p as AnyObject).value(forKey: "temperature")!)")
             }
         } catch  {
@@ -131,6 +143,7 @@ class DataController: NSObject {
             //p["processData"] =  true
         }
         Network.request(method: "GET", url: self.url(), params: p, success: {(result) in
+            self.removeAll()
             self.appendRecord(data: result)
             //通知名称常量
             let refresh = NSNotification.Name(rawValue:"refresh")

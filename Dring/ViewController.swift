@@ -259,8 +259,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let t1 = t.popFirst()
         
         let datas = DataController(name:t1?.value as! String).findAll()
+        Draw.temperature(recs: datas)
         
-        print(noti)
     }
     
 }
