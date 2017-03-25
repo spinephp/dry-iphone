@@ -58,6 +58,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var scrollPos:CGFloat = 0.0
     var scrollStartPoint:CGPoint!
     var viewBounds:CGRect!
+    static var temperatureDatas:NSMutableArray = []
     
     func getContext () -> NSManagedObjectContext {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -208,7 +209,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     func scrollViewDidScroll(_ scrollView:UIScrollView){
         /* 当用户滚动或拖动时触发 */
         Draw.grad(dx:Int(scrollView.contentOffset.x),rect: viewBounds)
-        
+        if ViewController.temperatureDatas.count>0{
+            Draw.temperature(recs: ViewController.temperatureDatas)
+        }
         //scrgollStartPoint = UIEvent.tou mouseLocation()
     }
     
@@ -258,8 +261,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         var t = noti.userInfo!
         let t1 = t.popFirst()
         
-        let datas = DataController(name:t1?.value as! String).findAll()
-        Draw.temperature(recs: datas)
+        ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll()
+        Draw.temperature(recs: ViewController.temperatureDatas)
         
     }
     

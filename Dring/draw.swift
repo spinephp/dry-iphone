@@ -10,12 +10,14 @@ import UIKit
 import Foundation
 
 class Draw{
+    static var temperatureData:NSMutableArray = []
     static var view:UIView? = nil
     static var drawGrad:Bool = true
     static var moveTextLayers:[CATextLayer] = []
     static var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0)]
     static var frameLeft = 30
-    static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 30
+    static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 35
+    static var frameWidth:Int = Int(Draw.moveLayers[0].0.frame.width) - 30
     static var scrollX = 0
     static var scale = 1
     static var coordSpace = 0 // 温度标尺间隔
@@ -282,22 +284,28 @@ class Draw{
         var x:Int = 0
         var y:Int = 0
         var y1:Int = 0
-        for (i,rec) in recs.enumerated(){//.filter({(($1 as! Dictionary<String, Any>)["time"]) as! Int) > scrollX*rote}){
+        var firstDraw = true
+        
+        for rec in recs{
             let r = rec as! Dictionary<String, Any>
-            let t:Int = Int((r["temperature"] as! Int) >> 4)
-            let t1:Int = Int((r["settingtemperature"] as! Int) >> 4)
-            x = (r["time"] as! Int)/rote-scrollX+frameLeft
-            y = frameHeight-(t+50)*coordSpace/10
-            y1 = frameHeight-(t1+50)*coordSpace/10
-            let pt = CGPoint(x:x,y:y)
-            let pt1 = CGPoint(x:x,y:y1)
-            if i > 0{
-                Draw.moveLayers[3].1.addLine(to: pt)
-                Draw.moveLayers[4].1.addLine(to: pt1)
-            }else{
-                Draw.moveLayers[3].1.move(to: pt)
-                Draw.moveLayers[4].1.move(to: pt1)
-            
+            let time = r["time"] as! Int
+            //
+            if time>scrollX*rote && time<scrollX*rote+frameWidth{
+                let t:Int = Int((r["temperature"] as! Int) >> 4)
+                let t1:Int = Int((r["settingtemperature"] as! Int) >> 4)
+                x = time/rote-scrollX+frameLeft
+                y = frameHeight-(t+50)*coordSpace/10
+                y1 = frameHeight-(t1+50)*coordSpace/10
+                let pt = CGPoint(x:x,y:y)
+                let pt1 = CGPoint(x:x,y:y1)
+                if firstDraw==true{
+                    firstDraw = false
+                    Draw.moveLayers[3].1.move(to: pt)
+                    Draw.moveLayers[4].1.move(to: pt1)
+                }else{
+                    Draw.moveLayers[3].1.addLine(to: pt)
+                    Draw.moveLayers[4].1.addLine(to: pt1)
+                }
             }
         }
         current_point = [x,y,y1]
