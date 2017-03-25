@@ -49,6 +49,10 @@ extension UIScrollView {
 class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelegate,UIScrollViewDelegate{
     var vmPicker:UIView!
     static var lbLoading:UILabel!
+    static var lbSettingTemperature:UILabel?
+    static var lbTemperature:UILabel?
+    static var lbRunTime:UILabel?
+    static var lbStatus:UILabel?
     var pickerView: UIPickerView!
     var scrollView: UIScrollView!
     var btnPicker: UIButton!
@@ -76,9 +80,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
                             height:UIScreen.main.bounds.height-20)
         Draw.vCoord(rect: viewBounds)
         Draw.grad(dx:0,rect: viewBounds)
-        Draw.frame(x:6,y:viewBounds.midY+viewBounds.height-253,width:102,height:55,stringWidth:65)
-        Draw.frame(x:128,y:viewBounds.midY+viewBounds.height-253,width:112,height:55,stringWidth:35)
-        Draw.frame(x:260,y:viewBounds.midY+viewBounds.height-253,width:123,height:55,stringWidth:35)
+        Draw.frame(x:6,y:viewBounds.midY+viewBounds.height-253,width:160,height:55,stringWidth:65)
+        Draw.frame(x:186,y:viewBounds.midY+viewBounds.height-253,width:200,height:55,stringWidth:35)
+        Draw.frame(x:407,y:viewBounds.midY+viewBounds.height-253,width:123,height:55,stringWidth:35)
         
         scrollView = UIScrollView(frame:viewBounds)
         
@@ -99,13 +103,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             for item in result!{
                 self.dryingRecord.append(item)
             }
-            for item in self.view.subviews{
-                if item.tag==101{
-                    let btn = item as! UIButton
-                    let s = ((result?.count)!>0) ? "请选择干燥记录" : "无"
-                    btn.setTitle(s, for: .normal)
-                }
-            }
+            ViewController.lbSettingTemperature = self.view.viewWithTag(1) as! UILabel?
+            ViewController.lbTemperature = self.view.viewWithTag(2) as! UILabel?
+            ViewController.lbRunTime = self.view.viewWithTag(7) as! UILabel?
+            ViewController.lbStatus = self.view.viewWithTag(6) as! UILabel?
+            let btn = self.view.viewWithTag(101) as! UIButton
+            let s = ((result?.count)!>0) ? "请选择干燥记录" : "无"
+            btn.setTitle(s, for: .normal)
         }, failure: {(error) in
             print(error)
         })
@@ -117,6 +121,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         // Dispose of any resources that can be recreated.
     }
     
+    // 创建一个选择框
     func createPickerview(title:String) -> Void {
         vmPicker = UIView(frame: CGRect(x:0, y:0, width:300, height:200))
         vmPicker.center = self.view.center
@@ -229,30 +234,58 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         //drawGrad(dx:Int(scrollPos),rect: viewBounds)
     }
     
-    //触摸按钮时，获得被选中的索引
+    // 触摸选择框"确定"按钮事件处理程序
     func getPickerViewValue(sender:UIButton){
         valuePicker = pickerView.selectedRow(inComponent: 0)
-        if btnPicker.tag == 100{
+        if btnPicker.tag == 100{ // 选择缩放
             btnPicker.setTitle(scales[valuePicker], for:.normal)
         }
-        else if btnPicker.tag==101 {
+        else if btnPicker.tag==101 {// 选择干燥记录
             btnPicker.setTitle(dryingRecord[valuePicker]["starttime"] as! String?, for:.normal)
+            
+            // 显示等待信息
             ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
             ViewController.lbLoading.text = "Loading..."
             self.view.addSubview(ViewController.lbLoading)
+            
+            // 向服务器请求数据
             DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
         }
-        //cancelPickerViewValue(sender: <#T##UIButton#>)
-        //pickerView.removeFromSuperview()
-        //sender.removeFromSuperview()
         vmPicker.removeFromSuperview()
     }
     
-    //触摸按钮时，获得被选中的索引
+    //触摸选择框"取消"按钮事件处理程序
     func cancelPickerViewValue(sender:UIButton){
-        //pickerView.removeFromSuperview()
-        //sender.removeFromSuperview()
         vmPicker.removeFromSuperview()
+    }
+    
+    // 显示干燥数据
+    func showDryData(rec:Dictionary<String, Any>)->Void{
+        let time = rec["time"] as! Int
+        let tm:Float = Float(rec["temperature"] as! Int) / 16.0
+        let tn:Float = Float(rec["settingtemperature"] as! Int) / 16.0
+        let tDiff = tm-tn
+        var diff:String = "正常"
+        ViewController.lbStatus?.backgroundColor = UIColor.green
+        if tDiff > 3{
+            diff = "太高"
+            ViewController.lbStatus?.backgroundColor = UIColor.red
+        }else if tDiff < -3{
+            ViewController.lbStatus?.backgroundColor = UIColor.red
+            diff = "太低"
+        }else if tDiff > 2{
+            diff = "偏高"
+            ViewController.lbStatus?.backgroundColor = UIColor.yellow
+        }else if tDiff < -2{
+            diff = "偏低"
+            ViewController.lbStatus?.backgroundColor = UIColor.yellow
+        }
+
+        ViewController.lbSettingTemperature?.text = String(format: "%.1f", tn)
+        ViewController.lbTemperature?.text = String(format: "%.1f", tm)
+        ViewController.lbRunTime?.text = String(format: "%02d:%02d", time/360,(time%6))
+        ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", tDiff)
+        
     }
     
     // selector是这样的
@@ -263,7 +296,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         
         ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll()
         Draw.temperature(recs: ViewController.temperatureDatas)
-        
+        showDryData(rec: ViewController.temperatureDatas.lastObject as! Dictionary<String, Any>)
     }
     
 }

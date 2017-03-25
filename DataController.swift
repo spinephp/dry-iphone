@@ -69,8 +69,6 @@ class DataController: NSObject {
                 }
             }
         }
-        
-        //AppDelegate().saveContext ()
     }
     
     // 取数据库实体属性
@@ -113,7 +111,8 @@ class DataController: NSObject {
                     model[attribute] = (p as AnyObject).value(forKey: attribute)
                 }
                 resListData.add(model)
-                print("id:  \((p as AnyObject).value(forKey: "id")!) time: \((p as AnyObject).value(forKey: "time")!) temperature: \((p as AnyObject).value(forKey: "temperature")!)")
+                
+                print("id:  \((p as AnyObject).value(forKey: "mode")!) time: \((p as AnyObject).value(forKey: "time")!) temperature: \((p as AnyObject).value(forKey: "temperature")!)")
             }
         } catch  {
             print(error)

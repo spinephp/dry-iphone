@@ -13,7 +13,6 @@
 		1B2866071E758E3A00D4751A /* DringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866061E758E3A00D4751A /* DringUITests.swift */; };
 		1B2866171E758EB100D4751A /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866161E758EB100D4751A /* DataController.swift */; };
 		1B28661C1E758F0000D4751A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B28661A1E758F0000D4751A /* Main.storyboard */; };
-		1B28661F1E758F2C00D4751A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B28661D1E758F2C00D4751A /* LaunchScreen.storyboard */; };
 		1B2866211E758F7100D4751A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1B2866201E758F7100D4751A /* Info.plist */; };
 		1B2866231E758FAE00D4751A /* DringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2866221E758FAE00D4751A /* DringTests.swift */; };
 		1B28662F1E75956700D4751A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B28662E1E75956700D4751A /* ViewController.swift */; };
@@ -51,7 +50,6 @@
 		1B2866081E758E3A00D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B2866161E758EB100D4751A /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = SOURCE_ROOT; };
 		1B28661B1E758F0000D4751A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		1B28661E1E758F2C00D4751A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1B2866201E758F7100D4751A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1B2866221E758FAE00D4751A /* DringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DringTests.swift; sourceTree = "<group>"; };
 		1B28662E1E75956700D4751A /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -116,7 +114,6 @@
 				1B28662E1E75956700D4751A /* ViewController.swift */,
 				1B28661A1E758F0000D4751A /* Main.storyboard */,
 				1B2865ED1E758E3A00D4751A /* Assets.xcassets */,
-				1B28661D1E758F2C00D4751A /* LaunchScreen.storyboard */,
 				1B2865EA1E758E3A00D4751A /* Dring.xcdatamodeld */,
 				1B2866201E758F7100D4751A /* Info.plist */,
 			);
@@ -203,6 +200,10 @@
 		1B2865D81E758E3A00D4751A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					1001,
+					1002,
+				);
 				LastSwiftUpdateCheck = 0820;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "刘兴明";
@@ -250,7 +251,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B2866211E758F7100D4751A /* Info.plist in Resources */,
-				1B28661F1E758F2C00D4751A /* LaunchScreen.storyboard in Resources */,
 				1B28661C1E758F0000D4751A /* Main.storyboard in Resources */,
 				1B2865EE1E758E3A00D4751A /* Assets.xcassets in Resources */,
 			);
@@ -325,14 +325,6 @@
 				1B28661B1E758F0000D4751A /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		1B28661D1E758F2C00D4751A /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1B28661E1E758F2C00D4751A /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

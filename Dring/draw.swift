@@ -16,7 +16,7 @@ class Draw{
     static var moveTextLayers:[CATextLayer] = []
     static var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0)]
     static var frameLeft = 30
-    static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 35
+    static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 36
     static var frameWidth:Int = Int(Draw.moveLayers[0].0.frame.width) - 30
     static var scrollX = 0
     static var scale = 1
