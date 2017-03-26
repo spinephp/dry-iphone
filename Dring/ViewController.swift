@@ -265,7 +265,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let tm:Float = Float(rec["temperature"] as! Int) / 16.0
         let tn:Float = Float(rec["settingtemperature"] as! Int) / 16.0
         let tDiff = tm-tn
-        var diff:String = "正常"
+        var diff:String
         ViewController.lbStatus?.backgroundColor = UIColor.green
         if tDiff > 3{
             diff = "太高"
@@ -279,6 +279,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }else if tDiff < -2{
             diff = "偏低"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
+        }else{
+            diff = "正常"
         }
 
         ViewController.lbSettingTemperature?.text = String(format: "%.1f", tn)

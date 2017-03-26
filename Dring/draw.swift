@@ -289,7 +289,8 @@ class Draw{
         for rec in recs{
             let r = rec as! Dictionary<String, Any>
             let time = r["time"] as! Int
-            //
+            
+            // 如 time 在屏幕可视区域内，则绘制该点
             if time>scrollX*rote && time<scrollX*rote+frameWidth{
                 let t:Int = Int((r["temperature"] as! Int) >> 4)
                 let t1:Int = Int((r["settingtemperature"] as! Int) >> 4)

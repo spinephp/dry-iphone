@@ -38,9 +38,7 @@
                                 <color key="backgroundColor" red="1" green="0.14939361810684204" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="6K0-s7-zVZ"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="7sj-V7-84w"/>
                                     <constraint firstAttribute="width" constant="42" id="Bc2-em-HMs"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="cHF-r1-uCH"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -112,10 +110,6 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="状态" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3nn-df-zye">
                                 <rect key="frame" x="190" y="308" width="42" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="42" id="RIP-AN-lCi"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="21" id="ZS4-Bq-pA9"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="bo4-Sk-gNs"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="dZP-5y-HAs"/>
                                     <constraint firstAttribute="width" constant="42" id="pFy-wU-BkJ"/>
                                     <constraint firstAttribute="height" constant="21" id="yA6-T3-idt"/>
                                 </constraints>
@@ -127,11 +121,7 @@
                                 <rect key="frame" x="190" y="330" width="42" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="42" id="5gz-Ml-JrK"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="8wC-zt-Qmu"/>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="42" id="DjY-sC-mgj"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="TGJ-gg-wjZ"/>
                                     <constraint firstAttribute="height" constant="21" id="eFH-eC-faB"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="21" id="jwd-IG-8Bx"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -142,8 +132,6 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="42" id="3yq-Vs-fxh"/>
                                     <constraint firstAttribute="height" constant="21" id="4a7-Z3-nxW"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="Drp-Ty-mTr"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="HHs-QQ-2Kq"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -153,9 +141,7 @@
                                 <rect key="frame" x="51" y="330" width="53" height="21"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="53" id="3B3-i2-Db5"/>
                                     <constraint firstAttribute="height" constant="21" id="S3K-Fm-0N3"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="gxM-bq-54Z"/>
                                     <constraint firstAttribute="width" constant="53" id="nES-KV-Pcv"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -177,10 +163,6 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="42" id="D2I-ye-EMe"/>
                                     <constraint firstAttribute="height" constant="21" id="MUM-c4-9wa"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="Xh0-w4-ptR"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="21" id="str-PH-J80"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="uG8-7U-aM0"/>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="42" id="v5q-AM-ybb"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -240,10 +222,8 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7UN-gH-dgp">
                                 <rect key="frame" x="117" y="330" width="42" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="CYM-cb-w6G"/>
                                     <constraint firstAttribute="height" constant="21" id="cLZ-Eb-Ast"/>
                                     <constraint firstAttribute="width" constant="42" id="mtm-Ob-k39"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="odM-gT-bhr"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
