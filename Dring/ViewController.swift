@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import AudioToolbox
 
 extension NSNumber {
     fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
@@ -113,7 +114,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }, failure: {(error) in
             print(error)
         })
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -258,7 +258,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     func cancelPickerViewValue(sender:UIButton){
         vmPicker.removeFromSuperview()
     }
-    
+
     // 显示干燥数据
     func showDryData(rec:Dictionary<String, Any>)->Void{
         let time = rec["time"] as! Int
@@ -266,23 +266,47 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let tn:Float = Float(rec["settingtemperature"] as! Int) / 16.0
         let tDiff = tm-tn
         var diff:String
+        var audioName:String?
         ViewController.lbStatus?.backgroundColor = UIColor.green
         if tDiff > 3{
             diff = "太高"
             ViewController.lbStatus?.backgroundColor = UIColor.red
+            audioName = "alarm.caf"
         }else if tDiff < -3{
             ViewController.lbStatus?.backgroundColor = UIColor.red
             diff = "太低"
+            audioName = "alarm.caf"
         }else if tDiff > 2{
             diff = "偏高"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
+            audioName = "Bloom.caf"
         }else if tDiff < -2{
             diff = "偏低"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
+            audioName = "Bloom.caf"
         }else{
             diff = "正常"
+            audioName = nil
         }
-
+        
+        // 起动多线程
+        DispatchQueue.global().async {
+            // 播放音频
+            if let name = audioName {
+                //建立的SystemSoundID对象
+                var soundID:SystemSoundID = 0
+                //地址转换
+                if let fileUrl = Bundle.main.url(forResource:name,withExtension:nil){
+                    //赋值
+                    AudioServicesCreateSystemSoundID(fileUrl as CFURL, &soundID)
+                    //提醒（同上面唯一的一个区别）
+                    AudioServicesPlayAlertSound(soundID)
+                }
+                DispatchQueue.main.async {  //通知ui刷新
+                }
+            }
+        }
+        
         ViewController.lbSettingTemperature?.text = String(format: "%.1f", tn)
         ViewController.lbTemperature?.text = String(format: "%.1f", tm)
         ViewController.lbRunTime?.text = String(format: "%02d:%02d", time/360,(time%6))
