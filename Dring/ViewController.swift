@@ -52,6 +52,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     static var lbLoading:UILabel!
     static var lbSettingTemperature:UILabel?
     static var lbTemperature:UILabel?
+    static var lbSettingVelocity:UILabel?
+    static var lbRealVelocity:UILabel?
     static var lbRunTime:UILabel?
     static var lbStatus:UILabel?
     var pickerView: UIPickerView!
@@ -106,6 +108,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             }
             ViewController.lbSettingTemperature = self.view.viewWithTag(1) as! UILabel?
             ViewController.lbTemperature = self.view.viewWithTag(2) as! UILabel?
+            ViewController.lbSettingVelocity = self.view.viewWithTag(3) as! UILabel?
+            ViewController.lbRealVelocity = self.view.viewWithTag(4) as! UILabel?
             ViewController.lbRunTime = self.view.viewWithTag(7) as! UILabel?
             ViewController.lbStatus = self.view.viewWithTag(6) as! UILabel?
             let btn = self.view.viewWithTag(101) as! UIButton
@@ -307,8 +311,12 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             }
         }
         
+        // 最小二乘法
+        let least = LeastSquare(datas: ViewController.temperatureDatas)
+        
         ViewController.lbSettingTemperature?.text = String(format: "%.1f", tn)
         ViewController.lbTemperature?.text = String(format: "%.1f", tm)
+        ViewController.lbRealVelocity?.text = String(format: "%.2f", least.getVelocity())
         ViewController.lbRunTime?.text = String(format: "%02d:%02d", time/360,(time%6))
         ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", tDiff)
         

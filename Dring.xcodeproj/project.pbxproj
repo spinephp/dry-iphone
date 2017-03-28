@@ -19,6 +19,7 @@
 		1B33DFC31E87E44700AF6D40 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B33DFC21E87E44700AF6D40 /* Audio.swift */; };
 		1BA166771E7CF6AF00203C09 /* draw.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA166761E7CF6AF00203C09 /* draw.swift */; };
 		1BADFEC31E7AB3B400CCB742 /* DryDataRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BADFEC21E7AB3B400CCB742 /* DryDataRefresh.swift */; };
+		1BB9D1861E8A7B4100AEA752 /* LeastSquare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB9D1851E8A7B4100AEA752 /* LeastSquare.swift */; };
 		1BCDFC0C1E7829FE00F3E752 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDFC0B1E7829FE00F3E752 /* Network.swift */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 		1B33DFC21E87E44700AF6D40 /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		1BA166761E7CF6AF00203C09 /* draw.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = draw.swift; sourceTree = "<group>"; };
 		1BADFEC21E7AB3B400CCB742 /* DryDataRefresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DryDataRefresh.swift; sourceTree = "<group>"; };
+		1BB9D1851E8A7B4100AEA752 /* LeastSquare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeastSquare.swift; sourceTree = "<group>"; };
 		1BCDFC0B1E7829FE00F3E752 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				1B33DFC21E87E44700AF6D40 /* Audio.swift */,
+				1BB9D1851E8A7B4100AEA752 /* LeastSquare.swift */,
 				1B2866161E758EB100D4751A /* DataController.swift */,
 				1BA166761E7CF6AF00203C09 /* draw.swift */,
 				1BADFEC21E7AB3B400CCB742 /* DryDataRefresh.swift */,
@@ -282,6 +285,7 @@
 			files = (
 				1B33DFC31E87E44700AF6D40 /* Audio.swift in Sources */,
 				1BCDFC0C1E7829FE00F3E752 /* Network.swift in Sources */,
+				1BB9D1861E8A7B4100AEA752 /* LeastSquare.swift in Sources */,
 				1BADFEC31E7AB3B400CCB742 /* DryDataRefresh.swift in Sources */,
 				1B2866171E758EB100D4751A /* DataController.swift in Sources */,
 				1B2865EC1E758E3A00D4751A /* Dring.xcdatamodeld in Sources */,
