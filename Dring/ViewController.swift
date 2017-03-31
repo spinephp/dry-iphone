@@ -59,7 +59,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var pickerView: UIPickerView!
     var scrollView: UIScrollView!
     var btnPicker: UIButton!
-    var scales = ["默认","4 小时","8 小时","12 小时","24 小时","48 小时","96 小时"]
+    var scales = ["默认","20 分钟","30 分钟","1 小时","2 小时","3 小时","4 小时","5 小时","6 小时","7 小时","8 小时"]
     var dryingRecord:[Dictionary<String, Any>] = []
     var valuePicker:Int = 0
     var scrollPos:CGFloat = 0.0
@@ -217,11 +217,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     
     func scrollViewDidScroll(_ scrollView:UIScrollView){
         /* 当用户滚动或拖动时触发 */
-        Draw.grad(dx:Int(scrollView.contentOffset.x),rect: viewBounds)
-        if ViewController.temperatureDatas.count>0{
-            Draw.temperature(recs: ViewController.temperatureDatas)
-        }
-        //scrgollStartPoint = UIEvent.tou mouseLocation()
+        drawTimeAndTemperature()
+       //scrgollStartPoint = UIEvent.tou mouseLocation()
     }
     
     func scrollViewDidEndDecelerating(_ scrollView:UIScrollView){
@@ -238,11 +235,25 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         //drawGrad(dx:Int(scrollPos),rect: viewBounds)
     }
     
+    // 重画时间线、时间单位值和温度曲线
+    func drawTimeAndTemperature()->Void{
+        Draw.grad(dx:Int(scrollView.contentOffset.x),rect: viewBounds)
+        if ViewController.temperatureDatas.count>0{
+            Draw.temperature(recs: ViewController.temperatureDatas)
+        }
+    }
+    
     // 触摸选择框"确定"按钮事件处理程序
     func getPickerViewValue(sender:UIButton){
         valuePicker = pickerView.selectedRow(inComponent: 0)
         if btnPicker.tag == 100{ // 选择缩放
             btnPicker.setTitle(scales[valuePicker], for:.normal)
+            
+            // 调整滚动棒当前位置
+            scrollView.contentOffset.x *= CGFloat(Draw.scales[Draw.scale])/CGFloat(Draw.scales[valuePicker])
+            
+            Draw.scale = valuePicker // 设置单位索引
+            drawTimeAndTemperature()
         }
         else if btnPicker.tag==101 {// 选择干燥记录
             btnPicker.setTitle(dryingRecord[valuePicker]["starttime"] as! String?, for:.normal)
@@ -266,25 +277,27 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     // 显示干燥数据
     func showDryData(rec:Dictionary<String, Any>)->Void{
         let time = rec["time"] as! Int
-        let tm:Float = Float(rec["temperature"] as! Int) / 16.0
-        let tn:Float = Float(rec["settingtemperature"] as! Int) / 16.0
+        let tm = rec["temperature"] as! Int
+        let tn = rec["settingtemperature"] as! Int
         let tDiff = tm-tn
         var diff:String
         var audioName:String?
         ViewController.lbStatus?.backgroundColor = UIColor.green
-        if tDiff > 3{
+        
+        // 设置警告声音和颜色
+        if tDiff > 48{
             diff = "太高"
             ViewController.lbStatus?.backgroundColor = UIColor.red
             audioName = "alarm.caf"
-        }else if tDiff < -3{
+        }else if tDiff < -48{
             ViewController.lbStatus?.backgroundColor = UIColor.red
             diff = "太低"
             audioName = "alarm.caf"
-        }else if tDiff > 2{
+        }else if tDiff > 32{
             diff = "偏高"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
             audioName = "Bloom.caf"
-        }else if tDiff < -2{
+        }else if tDiff < -32{
             diff = "偏低"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
             audioName = "Bloom.caf"
@@ -314,12 +327,11 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         // 最小二乘法
         let least = LeastSquare(datas: ViewController.temperatureDatas)
         
-        ViewController.lbSettingTemperature?.text = String(format: "%.1f", tn)
-        ViewController.lbTemperature?.text = String(format: "%.1f", tm)
+        ViewController.lbSettingTemperature?.text = String(format: "%.1f", Float(tn)/16.0)
+        ViewController.lbTemperature?.text = String(format: "%.1f", Float(tm)/16.0)
         ViewController.lbRealVelocity?.text = String(format: "%.2f", least.getVelocity())
         ViewController.lbRunTime?.text = String(format: "%02d:%02d", time/360,(time%6))
-        ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", tDiff)
-        
+        ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", Float(tDiff)/16.0)
     }
     
     // selector是这样的

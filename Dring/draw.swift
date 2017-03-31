@@ -19,14 +19,14 @@ class Draw{
     static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 36
     static var frameWidth:Int = Int(Draw.moveLayers[0].0.frame.width) - 30
     static var scrollX = 0
-    static var scale = 1
+    static var scale = 0
     static var coordSpace = 0 // 温度标尺间隔
-    static var xSpace = 0 //时间标尺间隔
+    static var xSpace = 60 //时间标尺间隔
     static var current_point = [0,0,0]
-    
+    static let scales = [1,2,3,6,12,18,24,30,36,42,48]
     var ruleTemperatureWidt:Int
     var ruleruleTimeHeight:Int
-    var scale:Int
+    //var scale:Int
     var offsetX:Int
     var unit:Int
     
@@ -34,7 +34,7 @@ class Draw{
     init(){
         ruleTemperatureWidt = 50
         ruleruleTimeHeight = 35
-        scale = 0
+        //scale = 1
         offsetX = 0
         unit = 1
         //resize()
@@ -141,7 +141,6 @@ class Draw{
             let y0 = maxY - CGFloat(i * coordSpace)
             if (n % 50 == 0){
                 x0 = 8
-                
                 if (n >= -50){
                     layer[0].1.move(to: CGPoint(x:x, y:y0))
                     layer[0].1.addLine(to: CGPoint(x:rect.width,y:y0))
@@ -184,6 +183,7 @@ class Draw{
      */
     static func grad(dx:Int,rect:CGRect)->Void {
         if Draw.drawGrad {
+            // 删除垂直线网格
             for moveLayer in Draw.moveLayers{
                 let theLayer = moveLayer.0
                 moveLayer.1.removeAllPoints()
@@ -191,22 +191,21 @@ class Draw{
                 if (Draw.view?.layer.sublayers?.contains(theLayer))!{
                     theLayer.removeFromSuperlayer()
                 }
-                
             }
+            // 删除时间轴刻度值
             for moveLayer in Draw.moveTextLayers{
                 moveLayer.removeFromSuperlayer()
             }
             
             // 绘图区域高度
             let coordHeight = Draw.moveLayers[0].0.frame.height - 30
-            
+            let drawWidth = Draw.moveLayers[0].0.frame.width
             // 座标线间隔
-            //let coordSpace:Int = Int(coordHeight / 22.0)
-            //var n = -50
+            Draw.xSpace = 60 // 每像素10秒，10分钟=60个像素，画一短标尺
             let maxY = Draw.moveLayers[0].0.frame.minX + coordHeight-1
-            let x:CGFloat = CGFloat(frameLeft)
-            let times = Int(Draw.moveLayers[0].0.frame.width/60)
-            let startValue = dx%60
+            let x = frameLeft
+            let times = Int(drawWidth / CGFloat(Draw.xSpace))
+            let startValue = dx % Draw.xSpace
             scrollX = dx
             // 绘制网格垂直线
             for i in 0...times {
@@ -223,19 +222,18 @@ class Draw{
                     Draw.moveTextLayers.append(tLayer)
                 }
                 
-                let xe = x+CGFloat(i*60-startValue)
+                let xe = x+i * Draw.xSpace - startValue
                 if xe > x {
                     Draw.moveLayers[0].1.move(to: CGPoint(x:xe, y:0))
-                    Draw.moveLayers[0].1.addLine(to: CGPoint(x:xe,y:maxY))
+                    Draw.moveLayers[0].1.addLine(to: CGPoint(x:xe,y:Int(maxY)))
                     
-                    xSpace = 60 // 每像素10秒，10分钟=60个像素，画一短标尺
-                    let time = dx/60+i //每像素10秒，10分钟=60个像素，画一短标尺
+                    let time = (dx/Draw.xSpace+i)*Draw.scales[Draw.scale] //每像素10秒，10分钟=60个像素，画一短标尺
                     let sHour = String(format:"%2d",time/6)
                     let sMinute = String(format:"%02d",(time%6)*10)
                     let s = "\(sHour):\(sMinute)"
                     
                     // 绘制座标轴刻度值
-                    Draw.moveText(tLayer:Draw.moveTextLayers[i], x: xe-20, y: maxY+25, width: 40, height: 12, s: "\(s)")
+                    Draw.moveText(tLayer:Draw.moveTextLayers[i], x: CGFloat(xe-20), y: maxY+25.0, width: 40, height: 12, s: "\(s)")
                 }
             }
             
@@ -254,6 +252,65 @@ class Draw{
             }
         }
     }
+    
+    /*
+     * 绘制网格线(画时间标尺)
+     * @param dx - int ,指定滚动棒位置
+     * @return void
+    static func drawRuleTime(dx:Int,rect:CGRect)->Void {
+        xSpace = 60 // 每像素10秒，10分钟=60个像素，画一短标尺
+        var interval = 6
+        @unit = 1
+        switch scale
+            case 1
+				xSpace = Draw.moveLayers[0].0.frame.width / 12
+				interval = 3
+				unit = 6
+    when 2
+				xSpace= Draw.moveLayers[0].0.frame.width / 12
+				interval = 3
+				unit = 12
+    when 3
+				@xSpace= Draw.moveLayers[0].0.frame.width / 12
+				interval = 3
+				@unit = 48
+    else
+				@xSpace = 60
+				interval = 6
+    y0 = @ruleTemperatureHeight
+    y1 = @ruleTemperatureHeight+5
+    @ctx.lineWidth = 1
+    i = 0
+    for sx in [@ruleTemperatureWidth...@ruleTimeWidth+@ruleTemperatureWidth+@offsetX] by @xSpace
+    #@ctx.beginPath()
+    linelen = 0
+    x = sx - @offsetX
+    unless i%(interval*@unit)
+				s = ""
+				linelen = 3
+				if i < 60
+    s += "0"
+				s +=  (i/6).toString()+":00"
+				@ctx.fillText s,x-15,y1+16 if x >= @ruleTemperatureWidth
+    if x >= @ruleTemperatureWidth
+				@ctx.beginPath()
+				@ctx.moveTo x ,y0
+				@ctx.lineTo x,y1+ linelen
+				@ctx.strokeStyle = "rgba(0,0,0,0.5)"
+				@ctx.stroke()
+    
+    @ctx.beginPath()
+    if i is 0
+				@ctx.moveTo sx,y0
+				@ctx.lineTo sx,0
+				@ctx.strokeStyle = "rgba(0,0,0,0.5)"
+    else
+				@ctx.moveTo x,y0
+				@ctx.lineTo x,0
+				@ctx.strokeStyle = "rgba(200,200,200,0.5)"
+    @ctx.stroke()
+    i+=@unit
+     */
     
     // 画查看线
     static func drawSeeLine(x:CGFloat)->Void{
@@ -280,7 +337,7 @@ class Draw{
         Draw.moveLayers[3].0.strokeColor = UIColor.red.cgColor
         Draw.moveLayers[4].0.lineWidth = 1
         Draw.moveLayers[4].0.strokeColor = UIColor.blue.cgColor
-        let rote = scale*60/xSpace
+        let rote = Draw.scales[Draw.scale]// * 60 / Draw.xSpace
         var x:Int = 0
         var y:Int = 0
         var y1:Int = 0
@@ -291,7 +348,7 @@ class Draw{
             let time = r["time"] as! Int
             
             // 如 time 在屏幕可视区域内，则绘制该点
-            if time>scrollX*rote && time<scrollX*rote+frameWidth{
+            if time>scrollX*rote && time<scrollX*rote+frameWidth*rote{
                 let t:Int = Int((r["temperature"] as! Int) >> 4)
                 let t1:Int = Int((r["settingtemperature"] as! Int) >> 4)
                 x = time/rote-scrollX+frameLeft
