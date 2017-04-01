@@ -54,6 +54,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     static var lbTemperature:UILabel?
     static var lbSettingVelocity:UILabel?
     static var lbRealVelocity:UILabel?
+    static var lbLineTime:UILabel?
     static var lbRunTime:UILabel?
     static var lbStatus:UILabel?
     var pickerView: UIPickerView!
@@ -66,6 +67,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var scrollStartPoint:CGPoint!
     var viewBounds:CGRect!
     static var temperatureDatas:NSMutableArray = []
+    static var lineStartTime:[Int] = [0]
     
     func getContext () -> NSManagedObjectContext {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -110,7 +112,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             ViewController.lbTemperature = self.view.viewWithTag(2) as! UILabel?
             ViewController.lbSettingVelocity = self.view.viewWithTag(3) as! UILabel?
             ViewController.lbRealVelocity = self.view.viewWithTag(4) as! UILabel?
-            ViewController.lbRunTime = self.view.viewWithTag(7) as! UILabel?
+            ViewController.lbLineTime = self.view.viewWithTag(7) as! UILabel?
+            ViewController.lbRunTime = self.view.viewWithTag(8) as! UILabel?
             ViewController.lbStatus = self.view.viewWithTag(6) as! UILabel?
             let btn = self.view.viewWithTag(101) as! UIButton
             let s = ((result?.count)!>0) ? "请选择干燥记录" : "无"
@@ -173,7 +176,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     // 缩放按键 touch up inside 事件处理程序
     @IBAction func scale(_ sender: UIButton) {
         btnPicker = sender
-        createPickerview(title:"设置缩放参数")
+        createPickerview(title:"设置时间单位")
     }
     
     // 干燥曲线按键 touch up inside 事件处理程序
@@ -280,6 +283,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let tm = rec["temperature"] as! Int
         let tn = rec["settingtemperature"] as! Int
         let tDiff = tm-tn
+        let mode = rec["mode"] as! Int
+        let lineTime = time - ViewController.lineStartTime[mode]
         var diff:String
         var audioName:String?
         ViewController.lbStatus?.backgroundColor = UIColor.green
@@ -330,6 +335,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.lbSettingTemperature?.text = String(format: "%.1f", Float(tn)/16.0)
         ViewController.lbTemperature?.text = String(format: "%.1f", Float(tm)/16.0)
         ViewController.lbRealVelocity?.text = String(format: "%.2f", least.getVelocity())
+        ViewController.lbLineTime?.text = String(format: "%02d:%02d", lineTime/360,(lineTime%6))
         ViewController.lbRunTime?.text = String(format: "%02d:%02d", time/360,(time%6))
         ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", Float(tDiff)/16.0)
     }
@@ -339,8 +345,15 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.lbLoading.removeFromSuperview()
         var t = noti.userInfo!
         let t1 = t.popFirst()
-        
-        ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll()
+        var currentLineno = 0
+        ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll(sucess: {(item) in
+            let mode = (item as AnyObject).value(forKey: "mode") as! Int
+            if currentLineno != mode{
+                let time = (item as AnyObject).value(forKey: "time")!
+                ViewController.lineStartTime.append(time as! Int)
+                currentLineno = mode
+            }
+            })
         Draw.temperature(recs: ViewController.temperatureDatas)
         showDryData(rec: ViewController.temperatureDatas.lastObject as! Dictionary<String, Any>)
     }

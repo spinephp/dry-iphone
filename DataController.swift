@@ -97,7 +97,7 @@ class DataController: NSObject {
         }
     }
     
-    func findAll()-> NSMutableArray {
+    func findAll(sucess:((AnyObject)->Void)?)-> NSMutableArray {
         //let fetchRequest = NSFetchRequest<DryData>(entityName: self.name)
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: self.name)
         var resListData: NSMutableArray = NSMutableArray()
@@ -112,6 +112,9 @@ class DataController: NSObject {
                 }
                 resListData.add(model)
                 
+                if ((sucess) != nil){
+                    sucess!(p as AnyObject)
+                }
                 print("id:  \((p as AnyObject).value(forKey: "mode")!) time: \((p as AnyObject).value(forKey: "time")!) temperature: \((p as AnyObject).value(forKey: "temperature")!)")
             }
         } catch  {
