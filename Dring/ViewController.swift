@@ -173,16 +173,23 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         self.view.addSubview(vmPicker)
     }
     
+    //
+    func createPickByBtn(btn:UIButton,title:String)->Void{
+        btnPicker = btn
+        if btn.isEnabled{
+            setButtonsEnabled(enabled:false)
+            createPickerview(title:title)
+        }
+    }
+    
     // 缩放按键 touch up inside 事件处理程序
     @IBAction func scale(_ sender: UIButton) {
-        btnPicker = sender
-        createPickerview(title:"设置时间单位")
+        createPickByBtn(btn:sender,title:"设置时间单位")
     }
     
     // 干燥曲线按键 touch up inside 事件处理程序
     @IBAction func dryingDate(_ sender: UIButton) {
-        btnPicker = sender
-        createPickerview(title:"选择干燥记录")
+        createPickByBtn(btn:sender,title:"选择干燥记录")
     }
     
     //设置选择框的列数为1列,继承于UIPickerViewDataSource协议
@@ -270,11 +277,20 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
         }
         vmPicker.removeFromSuperview()
+        setButtonsEnabled(enabled:true)
+    }
+    
+    func setButtonsEnabled(enabled:Bool)->Void{
+        for i in 100...101{
+            let btn = self.view.viewWithTag(i) as! UIButton
+            btn.isEnabled = enabled
+        }
     }
     
     //触摸选择框"取消"按钮事件处理程序
     func cancelPickerViewValue(sender:UIButton){
         vmPicker.removeFromSuperview()
+        setButtonsEnabled(enabled:true)
     }
 
     // 显示干燥数据
