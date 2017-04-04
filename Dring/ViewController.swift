@@ -16,37 +16,6 @@ extension NSNumber {
 
 var touchPoint = CGPoint(x:0,y:0)
 
-extension UIScrollView {
-    public func  touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        for touch: AnyObject in touches {
-            let t:UITouch = touch as! UITouch
-            //当在屏幕上连续拍动两下时，背景恢复为白色
-            if(t.tapCount == 2)
-            {
-                let point:CGPoint = (event.allTouches?.first?.location(in: self))!
-                Draw.removeSeeLine(x: point.x)
-            }
-                //当在屏幕上单击时，屏幕变为红色
-            else if(t.tapCount == 1)
-            {
-                let point:CGPoint = (event.allTouches?.first?.location(in: self))!
-                Draw.removeSeeLine(x: point.x)
-            }
-            print("event begin!")
-        }
-    }
-    public func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-        self.next?.touchesMoved(touches as! Set<UITouch>, with: event)
-        let point:CGPoint = (event.allTouches?.first?.location(in: self))!
-        Draw.removeSeeLine(x: point.x)
-        Draw.drawSeeLine(x: point.x)
-    }
-    public func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
-        self.next?.touchesEnded(touches as! Set<UITouch>, with: event)
-        
-    }
-}
-
 class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelegate,UIScrollViewDelegate{
     var vmPicker:UIView!
     static var lbLoading:UILabel!
@@ -74,8 +43,37 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         return appDelegate.persistentContainer.viewContext
     }
     
+    //长按手势
+    func handleLongpressGesture(sender : UILongPressGestureRecognizer){
+        
+        let point:CGPoint = sender.location(in: self.view)
+        var time:Int
+        if sender.state == UIGestureRecognizerState.began{
+            time = Draw.drawSeeLine(x: point.x-30)
+        }else if sender.state == UIGestureRecognizerState.ended{
+            Draw.removeSeeLine(x: point.x)
+        }else if sender.state == UIGestureRecognizerState.changed{
+            Draw.removeSeeLine(x: point.x)
+            time = Draw.drawSeeLine(x: point.x-30)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //支持多点触摸
+        self.view.isMultipleTouchEnabled = true
+        
+        // 长按手势
+        var longpressGesutre = UILongPressGestureRecognizer(target: self, action:#selector(handleLongpressGesture))
+        //长按时间为1秒
+        longpressGesutre.minimumPressDuration = 1
+        //允许15秒运动
+        longpressGesutre.allowableMovement = 15
+        //所需触摸1次
+        longpressGesutre.numberOfTouchesRequired = 1
+        self.view.addGestureRecognizer(longpressGesutre)
+        
         // Do any additional setup after loading the view, typically from a nib.
         Draw.view = self.view
         
@@ -118,6 +116,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             let btn = self.view.viewWithTag(101) as! UIButton
             let s = ((result?.count)!>0) ? "请选择干燥记录" : "无"
             btn.setTitle(s, for: .normal)
+            btn.isEnabled = (result?.count)!>0
         }, failure: {(error) in
             print(error)
         })

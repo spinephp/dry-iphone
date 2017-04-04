@@ -14,7 +14,7 @@ class Draw{
     static var view:UIView? = nil
     static var drawGrad:Bool = true
     static var moveTextLayers:[CATextLayer] = []
-    static var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0)]
+    static var moveLayers:[(CAShapeLayer ,UIBezierPath,CGFloat)] = [(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),0.7),(CAShapeLayer(),UIBezierPath(),1.0),(CAShapeLayer(),UIBezierPath(),1.0)]
     static var frameLeft = 30
     static var frameHeight:Int = Int(Draw.moveLayers[0].0.frame.height) - 36
     static var frameWidth:Int = Int(Draw.moveLayers[0].0.frame.width) - 30
@@ -313,8 +313,8 @@ class Draw{
      */
     
     // 画查看线
-    static func drawSeeLine(x:CGFloat)->Void{
-        Draw.moveLayers[2].1.move(to: CGPoint(x:x, y:Draw.moveLayers[2].0.frame.height))
+    static func drawSeeLine(x:CGFloat)->Int{
+        Draw.moveLayers[2].1.move(to: CGPoint(x:x, y:Draw.moveLayers[2].0.frame.height-35))
         Draw.moveLayers[2].1.addLine(to: CGPoint(x:x, y:0))
         Draw.moveLayers[2].0.path=Draw.moveLayers[2].1.cgPath
         //填充颜色
@@ -323,12 +323,13 @@ class Draw{
         let color:CGFloat = CGFloat(Draw.moveLayers[2].2)
         Draw.moveLayers[2].0.strokeColor=UIColor.init(red: color, green: color, blue: color, alpha: 1.0).cgColor
         Draw.view?.layer.addSublayer(Draw.moveLayers[2].0)
-        //Int((x+@offsetX)*@unit*60/@xSpace) // 返回当前平移和缩放参数下的 x 坐标(时间)
+        return Int((Int(x)+scrollX)*10*Draw.scales[Draw.scale]/Draw.xSpace) // 返回当前平移和缩放参数下的 x 坐标(时间)
     }
     
     // 擦查看线
     static func removeSeeLine(x:CGFloat)->Void{
         Draw.moveLayers[2].0.removeFromSuperlayer()
+        Draw.moveLayers[2].1.removeAllPoints()
     }
     
     // 画温度线
