@@ -47,14 +47,26 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     func handleLongpressGesture(sender : UILongPressGestureRecognizer){
         
         let point:CGPoint = sender.location(in: self.view)
-        var time:Int
+        var time:Int = -1
         if sender.state == UIGestureRecognizerState.began{
-            time = Draw.drawSeeLine(x: point.x-30)
+            time = Draw.drawSeeLine(x: point.x)
         }else if sender.state == UIGestureRecognizerState.ended{
             Draw.removeSeeLine(x: point.x)
         }else if sender.state == UIGestureRecognizerState.changed{
             Draw.removeSeeLine(x: point.x)
-            time = Draw.drawSeeLine(x: point.x-30)
+            time = Draw.drawSeeLine(x: point.x)
+        }
+        
+        // 查找干燥数据中与 time 相对应的记录，并显示该记录的参数和状态
+        if time != -1 && ViewController.temperatureDatas.count>0{
+            for rec in ViewController.temperatureDatas{
+                let r = rec as! Dictionary<String, Any>
+                let time1 = r["time"] as! Int
+                if time1 >= time{
+                    showDryData(rec:r) // show dry paramters and status
+                    break
+                }
+            }
         }
     }
     
