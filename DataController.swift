@@ -97,13 +97,18 @@ class DataController: NSObject {
         }
     }
     
-    func findAll(sucess:((AnyObject)->Void)?)-> NSMutableArray {
+    /**
+     * 返回实体中的全部记录
+     * @param eachRecord - 回调函数,处理实体中的每一个记录
+     * @return NSMutableArray 包含实体中所有记录的数组
+     */
+    func findAll(eachRecord:((AnyObject)->Void)?)-> NSMutableArray {
         //let fetchRequest = NSFetchRequest<DryData>(entityName: self.name)
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: self.name)
         var resListData: NSMutableArray = NSMutableArray()
         do {
             let searchResults = try ViewController().getContext().fetch(fetchRequest)
-            print("numbers of \(searchResults.count)")
+            //print("numbers of \(searchResults.count)")
             
             for p in (searchResults ){
                 var model:[String:Any] = [:]
@@ -112,10 +117,10 @@ class DataController: NSObject {
                 }
                 resListData.add(model)
                 
-                if ((sucess) != nil){
-                    sucess!(p as AnyObject)
+                if ((eachRecord) != nil){
+                    eachRecord!(p as AnyObject)
                 }
-                print("id:  \((p as AnyObject).value(forKey: "mode")!) time: \((p as AnyObject).value(forKey: "time")!) temperature: \((p as AnyObject).value(forKey: "temperature")!)")
+                //print("id:  \((p as AnyObject).value(forKey: "mode")!) time: \((p as AnyObject).value(forKey: "time")!) temperature: \((p as AnyObject).value(forKey: "temperature")!)")
             }
         } catch  {
             print(error)
@@ -137,7 +142,7 @@ class DataController: NSObject {
     }
     
     func fetchDryData(mainid:String,params:[String: Any]!) -> Bool{
-        let con1:Dictionary<String, Any> = ["field":"mainid" as Any,"value":mainid as Any,"operator":"eq" as Any]
+        let con1:Dictionary<String, Any> = ["field":"mainid","value":mainid,"operator":"eq"]
         //let condition = [con1]
         var p:[String: Any]! = params
         if p == nil{

@@ -323,7 +323,7 @@ class Draw{
         let color:CGFloat = CGFloat(Draw.moveLayers[2].2)
         Draw.moveLayers[2].0.strokeColor=UIColor.init(red: color, green: color, blue: color, alpha: 1.0).cgColor
         Draw.view?.layer.addSublayer(Draw.moveLayers[2].0)
-        return Int((x+CGFloat(scrollX))*CGFloat(Draw.scales[Draw.scale])) // 返回当前平移和缩放参数下的 x 坐标(时间)
+        return Int((x-30+CGFloat(scrollX))*CGFloat(Draw.scales[Draw.scale])) // 返回当前平移和缩放参数下的 x 坐标(时间)
     }
     
     // 擦查看线

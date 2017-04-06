@@ -223,17 +223,26 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     //设置选择框各选项的内容，继承于UIPickerViewDelegate协议
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int,
                     forComponent component: Int) -> String? {
+        var result:String?
         if btnPicker.tag == 100{
-            return scales[row]
+            result = scales[row]
         }
         else if btnPicker.tag==101 {
+            var state:Int = -1
             for item in dryingRecord[row]{
                 if item.key=="starttime"{
-                    return item.value  as? String
+                    result = (item.value  as? String)!
+                }else if item.key=="state"{
+                    state = item.value as! Int
                 }
             }
+            if state==0{
+                result = "🔥"+result!
+            }else{
+                result = "❄️"+result!
+            }
         }
-        return nil
+        return result
     }
     
     func scrollViewDidScroll(_ scrollView:UIScrollView){
@@ -277,7 +286,14 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             drawTimeAndTemperature()
         }
         else if btnPicker.tag==101 {// 选择干燥记录
-            btnPicker.setTitle(dryingRecord[valuePicker]["starttime"] as! String?, for:.normal)
+            let state=dryingRecord[valuePicker]["state"] as! Int
+            var title = dryingRecord[valuePicker]["starttime"] as! String?
+            if state==0{
+                title = "🔥"+title!
+            }else{
+                title = "❄️"+title!
+            }
+            btnPicker.setTitle(title, for:.normal)
             
             // 显示等待信息
             ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
@@ -362,8 +378,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.lbSettingTemperature?.text = String(format: "%.1f", Float(tn)/16.0)
         ViewController.lbTemperature?.text = String(format: "%.1f", Float(tm)/16.0)
         ViewController.lbRealVelocity?.text = String(format: "%.2f", least.getVelocity())
-        ViewController.lbLineTime?.text = String(format: "%02d:%02d", lineTime/360,(lineTime%6))
-        ViewController.lbRunTime?.text = String(format: "%02d:%02d", time/360,(time%6))
+        ViewController.lbLineTime?.text = String(format: "%02d:%02d:%1d0", lineTime/360,(lineTime/6)%60,lineTime%6)
+        ViewController.lbRunTime?.text = String(format: "%02d:%02d:%1d0", time/360,(time/6)%60,time%6)
         ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", Float(tDiff)/16.0)
     }
     
@@ -373,7 +389,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         var t = noti.userInfo!
         let t1 = t.popFirst()
         var currentLineno = 0
-        ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll(sucess: {(item) in
+        ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll(eachRecord: {(item) in
             let mode = (item as AnyObject).value(forKey: "mode") as! Int
             if currentLineno != mode{
                 let time = (item as AnyObject).value(forKey: "time")!
