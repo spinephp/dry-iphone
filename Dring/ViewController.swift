@@ -15,6 +15,7 @@ extension NSNumber {
 }
 
 var touchPoint = CGPoint(x:0,y:0)
+var timerCount = 0
 
 class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelegate,UIScrollViewDelegate{
     var vmPicker:UIView!
@@ -26,6 +27,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     static var lbLineTime:UILabel?
     static var lbRunTime:UILabel?
     static var lbStatus:UILabel?
+    static var isWiatDry:Bool = true
+    static var timer:DispatchSourceTimer?
     var pickerView: UIPickerView!
     var scrollView: UIScrollView!
     var btnPicker: UIButton!
@@ -97,7 +100,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         Draw.grad(dx:0,rect: viewBounds)
         Draw.frame(x:6,y:viewBounds.midY+viewBounds.height-253,width:160,height:55,stringWidth:65)
         Draw.frame(x:186,y:viewBounds.midY+viewBounds.height-253,width:200,height:55,stringWidth:35)
-        Draw.frame(x:407,y:viewBounds.midY+viewBounds.height-253,width:123,height:55,stringWidth:35)
+        Draw.frame(x:407,y:viewBounds.midY+viewBounds.height-253,width:126,height:55,stringWidth:35)
         
         scrollView = UIScrollView(frame:viewBounds)
         
@@ -117,6 +120,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             self.dryingRecord.removeAll()
             for item in result!{
                 self.dryingRecord.append(item)
+                if (item["state"] as! Int)==0{
+                    ViewController.isWiatDry = false
+                }
             }
             ViewController.lbSettingTemperature = self.view.viewWithTag(1) as! UILabel?
             ViewController.lbTemperature = self.view.viewWithTag(2) as! UILabel?
@@ -211,13 +217,17 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     //设置选择框的行数，继承于UIPickerViewDataSource协议
     func pickerView(_ pickerView: UIPickerView,
                     numberOfRowsInComponent component: Int) -> Int {
+        var result = 0
         if btnPicker.tag == 100{
-            return scales.count
+            result = scales.count
         }
         else if btnPicker.tag==101 {
-            return dryingRecord.count
+            result = dryingRecord.count
+            if ViewController.isWiatDry{
+                result += 1
+            }
         }
-        return 0
+        return result
     }
     
     //设置选择框各选项的内容，继承于UIPickerViewDelegate协议
@@ -228,6 +238,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             result = scales[row]
         }
         else if btnPicker.tag==101 {
+            if row < dryingRecord.count{
             var state:Int = -1
             for item in dryingRecord[row]{
                 if item.key=="starttime"{
@@ -240,6 +251,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
                 result = "🔥"+result!
             }else{
                 result = "❄️"+result!
+            }
+            }else{
+                result = "🔥等待干燥开始..."
             }
         }
         return result
@@ -286,27 +300,114 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             drawTimeAndTemperature()
         }
         else if btnPicker.tag==101 {// 选择干燥记录
-            let state=dryingRecord[valuePicker]["state"] as! Int
-            var title = dryingRecord[valuePicker]["starttime"] as! String?
-            if state==0{
-                title = "🔥"+title!
+            var title:String?
+            if valuePicker<dryingRecord.count{
+                //定时器取消，会销毁
+                ViewController.timer?.cancel()
+                
+                let state=dryingRecord[valuePicker]["state"] as! Int
+                title = dryingRecord[valuePicker]["starttime"] as! String?
+                if state==0{// 正在干燥的记录
+                    title = "🔥"+title!
+                }else{// 已干燥的记录
+                    title = "❄️"+title!
+                }
+                
+                // 显示等待信息
+                ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
+                ViewController.lbLoading.text = "Loading..."
+                self.view.addSubview(ViewController.lbLoading)
+                
+                // 向服务器请求数据
+                DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
             }else{
-                title = "❄️"+title!
+                title = "🔥等待干燥开始..."
+                ViewController.timer = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
+                ViewController.timer?.scheduleRepeating(deadline: .now(), interval: .seconds(10) ,leeway:.milliseconds(40))
+                ViewController.timer?.setEventHandler {
+                    //该处设定要执行的事件，比如说要定时器控制的界面的刷新等等，记住，要用主线程刷新，不然会有延迟
+                    self.checkDryStart()
+                    timerCount += 1
+                }
+                // 启动时间源
+                ViewController.timer?.resume()
             }
             btnPicker.setTitle(title, for:.normal)
-            
-            // 显示等待信息
-            ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
-            ViewController.lbLoading.text = "Loading..."
-            self.view.addSubview(ViewController.lbLoading)
-            
-            // 向服务器请求数据
-            DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
         }
         vmPicker.removeFromSuperview()
         setButtonsEnabled(enabled:true)
     }
     
+    // 实时等待干燥开始
+    func checkDryStart()->Void{
+        // 远程获得干燥记录数据
+        let drymain = DataController(name: "DryMain")
+        let condition = [["field":"state","value":0,"operator":"eq"]]
+        let param = ["filter": drymain.attributes(),"cond":condition] as [String : Any]
+        Network.request(method: "GET", url: drymain.url(), params: param, success: {(result) in
+            if (result?.count)!>0{
+                //定时器取消，会销毁
+                ViewController.timer?.cancel()
+            
+                var item = result?[0]
+                var title = item?["starttime"] as! String?
+                var mainid = item?["mainid"] as! Int?
+                let btn = self.view.viewWithTag(101) as! UIButton
+                btn.setTitle("🔥"+title!, for: .normal)
+                self.dryingRecord.append(item!)
+                ViewController.isWiatDry = false
+            
+                ViewController.timer = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
+                ViewController.timer?.scheduleRepeating(deadline: .now(), interval: .seconds(10) ,leeway:.milliseconds(40))
+                ViewController.timer?.setEventHandler {
+                    //该处设定要执行的事件，比如说要定时器控制的界面的刷新等等，记住，要用主线程刷新，不然会有延迟
+                    self.findNewData(mainid:mainid!)
+                    timerCount += 1
+                }
+            }
+        }, failure: {(error) in
+            print(error)
+        })
+    }
+    
+    // 取实时干燥数据
+    func findNewData(mainid:Int)->Void{
+        // 远程获得干燥记录数据
+        let drymain = DataController(name: "DryData")
+        let condition = [["field":"mainid","value":mainid,"operator":"eq"]]
+        let param = ["filter": drymain.attributes(),"cond":condition] as [String : Any]
+        Network.request(method: "GET", url: drymain.url(), params: param, success: {(result) in
+        }, failure: {(error) in
+            print(error)
+        })
+    }
+    /*
+        Drydata.getNew mainid,(record,islast)=>
+            @setScrollBar()
+            if Drydata.findByAttribute('mainid',parseInt @item.drymains.id).eql record
+				@curDraw?.moveToPoint record
+				@curLine = record.mode
+				@curLineStartTemperature = record.settingtemperature
+				@maxSettingTemperature = record.settingtemperature
+				@maxTemperature =  record.temperature
+            else
+				@curDraw?.drawToPoint record
+				color = {'value':@maxTemperatureDiffColor}
+				if @_maxTemperatureDiff record,color
+                    @maxTemperatureDiffColor = color.value
+                    $(@dryDataEl).eq(1).text (record.settingtemperature >> 4).toString()
+                    $(@dryDataEl).eq(3).text (record.temperature >> 4).toString()
+                    $(@dryDataEl).eq(1).css 'background',@maxTemperatureDiffColor
+                    $(@dryDataEl).eq(3).css 'background',@maxTemperatureDiffColor
+    
+            if @curLine isnt record.mode
+				@curLine = record.mode
+				@curLineStartTime = record.time
+            if islast
+				@showDryParam record
+				@item.drydatas = Drydata.findAllByAttribute 'mainid', parseInt @item.drymains.id
+    }
+    */
     func setButtonsEnabled(enabled:Bool)->Void{
         for i in 100...101{
             let btn = self.view.viewWithTag(i) as! UIButton
