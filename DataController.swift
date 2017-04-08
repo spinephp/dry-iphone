@@ -53,9 +53,12 @@ class DataController: NSObject {
             let context = ViewController().getContext()
             var table = NSEntityDescription.insertNewObject(forEntityName: self.name,
                                                             into: context)
+            var attrs = attributes()
             for rec in item{
                 //table.setValue(rec.value, forKey: rec.key)
-                table.setPrimitiveValue(rec.value, forKey:rec.key )
+                if attrs.index(of: rec.key)! >= 0{
+                    table.setPrimitiveValue(rec.value, forKey:rec.key )
+                }
             }
             //保存
             if context.hasChanges {
@@ -128,6 +131,57 @@ class DataController: NSObject {
         return resListData
     }
     
+    /**
+     * 实体中的记录格式转换成 NSMutableArray
+     * @param records - 实体中的记录
+     * @return [Any] 记录转换后的数组
+     */
+    func recordToArray(records:[[String:AnyObject]]?,eachRecord:((AnyObject)->Void)?)-> [Any] {
+        var resListData: [Any] = []
+        do {
+            for p in records!{
+                var model:[String:Any] = [:]
+                for attribute in attributes(){
+                    model[attribute] = (p as AnyObject).value(forKey: attribute)
+                }
+                resListData.append(model)
+                if ((eachRecord) != nil){
+                    eachRecord!(p as AnyObject)
+                }
+            }
+        } catch  {
+            print(error)
+        }
+        return resListData
+    }
+    
+    /**
+     * 返回实体中的指定记录
+     * @param id - 记录中的关键字段
+     * @return [String:Any] 查到的实体中的记录
+     */
+    func find(id:Int)-> [String:Any] {
+        //let fetchRequest = NSFetchRequest<DryData>(entityName: self.name)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: self.name)
+        
+        //设置查询条件
+        let predicate = NSPredicate.init(format: "id = \(id)", "")
+        fetchRequest.predicate = predicate
+        
+        var model:[String:Any] = [:]
+        do {
+            let searchResults = try ViewController().getContext().fetch(fetchRequest)
+            let p = searchResults[0]
+            
+            for attribute in attributes(){
+                model[attribute] = (p as AnyObject).value(forKey: attribute)
+            }
+        } catch  {
+            print(error)
+        }
+        return model
+    }
+    
     func fetch(params:[String: Any]!) -> Bool{
         var p:[String: Any]! = params
         if p == nil{
@@ -140,52 +194,4 @@ class DataController: NSObject {
         })
         return true
     }
-    
-    func fetchDryData(mainid:String,params:[String: Any]!) -> Bool{
-        let con1:Dictionary<String, Any> = ["field":"mainid","value":mainid,"operator":"eq"]
-        //let condition = [con1]
-        var p:[String: Any]! = params
-        if p == nil{
-            p = ["filter": ["id","time","settingtemperature","temperature","mode"],"cond":[con1]]
-            //p["processData"] =  true
-        }
-        Network.request(method: "GET", url: self.url(), params: p, success: {(result) in
-            self.removeAll()
-            self.appendRecord(data: result)
-            //通知名称常量
-            let refresh = NSNotification.Name(rawValue:"refresh")
-            let noti = NSNotification(name: refresh, object: self, userInfo: ["value":"DryData"])
-            let notiCenter = NotificationCenter.default
-            // 先注册通知监听者
-            notiCenter.addObserver(self, selector: #selector(self.dataRefresh(noti:)), name: refresh, object: self)
-            
-            //延时2s
-            sleep(2)
-            // 发布通知
-            notiCenter.post(noti as Notification)//之前直接使用Notification就没有这样as来转换了
-            
-        }, failure: {(error) in
-            print(error)
-        })
-        return true
-    }
-    
-    // selector是这样的
-    func dataRefresh(noti: Notification) {
-        ViewController().testNoti(noti: noti)
-    }
-    
-    func getStart(sucess:(Array<Any>)->Void) ->Void{
-        let fields = self.attributes()
-        let condition = [["field":"state","value":0,"operator":"eq"]]
-        //let token =  $.fn.cookie 'PHPSESSID'
-        let p = ["cond":condition,"filter":fields,"token":""] as [String : Any]
-        Network.request(method: "GET", url: self.url(), params: p as Dictionary<String, AnyObject>, success: {(result) in
-            if (result?.count)! > 0{
-                self.appendRecord(data: result)
-            }
-        }, failure: {(error) in
-            print(error)
-        })
-    }
-} //from everyang.net
+}

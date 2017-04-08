@@ -29,6 +29,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     static var lbStatus:UILabel?
     static var isWiatDry:Bool = true
     static var timer:DispatchSourceTimer?
+    static var timer1:DispatchSourceTimer?
     var pickerView: UIPickerView!
     var scrollView: UIScrollView!
     var btnPicker: UIButton!
@@ -39,6 +40,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var scrollStartPoint:CGPoint!
     var viewBounds:CGRect!
     static var temperatureDatas:NSMutableArray = []
+    static var currentLineNo:Int = 0
     static var lineStartTime:[Int] = [0]
     
     func getContext () -> NSManagedObjectContext {
@@ -79,7 +81,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         //支持多点触摸
         self.view.isMultipleTouchEnabled = true
         
-        // 长按手势
+        // 长按手势,显示查看线
         var longpressGesutre = UILongPressGestureRecognizer(target: self, action:#selector(handleLongpressGesture))
         //长按时间为1秒
         longpressGesutre.minimumPressDuration = 1
@@ -301,6 +303,10 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
         else if btnPicker.tag==101 {// 选择干燥记录
             var title:String?
+            
+            ViewController.temperatureDatas.removeAllObjects()
+            DataController(name: "DryData").removeAll()
+            
             if valuePicker<dryingRecord.count{
                 //定时器取消，会销毁
                 ViewController.timer?.cancel()
@@ -314,12 +320,14 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
                 }
                 
                 // 显示等待信息
-                ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
-                ViewController.lbLoading.text = "Loading..."
-                self.view.addSubview(ViewController.lbLoading)
+                //ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
+                //ViewController.lbLoading.text = "Loading..."
+                //self.view.addSubview(ViewController.lbLoading)
                 
                 // 向服务器请求数据
-                DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
+                let id = dryingRecord[valuePicker]["id"] as! String
+                findNewData(mainid: Int(id)!)
+                //DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
             }else{
                 title = "🔥等待干燥开始..."
                 ViewController.timer = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
@@ -343,7 +351,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         // 远程获得干燥记录数据
         let drymain = DataController(name: "DryMain")
         let condition = [["field":"state","value":0,"operator":"eq"]]
-        let param = ["filter": drymain.attributes(),"cond":condition] as [String : Any]
+        let attrs = drymain.attributes()
+        let param = ["filter": attrs,"cond":condition] as [String : Any]
         Network.request(method: "GET", url: drymain.url(), params: param, success: {(result) in
             if (result?.count)!>0{
                 //定时器取消，会销毁
@@ -351,63 +360,82 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             
                 var item = result?[0]
                 var title = item?["starttime"] as! String?
-                var mainid = item?["mainid"] as! Int?
+                var mainid = Int((item?["id"] as! String?)!)
                 let btn = self.view.viewWithTag(101) as! UIButton
                 btn.setTitle("🔥"+title!, for: .normal)
                 self.dryingRecord.append(item!)
-                ViewController.isWiatDry = false
-            
-                ViewController.timer = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
-                ViewController.timer?.scheduleRepeating(deadline: .now(), interval: .seconds(10) ,leeway:.milliseconds(40))
-                ViewController.timer?.setEventHandler {
-                    //该处设定要执行的事件，比如说要定时器控制的界面的刷新等等，记住，要用主线程刷新，不然会有延迟
-                    self.findNewData(mainid:mainid!)
-                    timerCount += 1
-                }
+                self.inTimeRequest(mainid: mainid!)
             }
         }, failure: {(error) in
             print(error)
         })
     }
     
+    // 设置定时器，向服务器请求 DryData 实时数据
+    func inTimeRequest(mainid:Int)->Void{
+        ViewController.isWiatDry = false
+        
+        // 设置定时器，每10秒向服务器发请求一次
+        ViewController.timer1 = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
+        ViewController.timer1?.scheduleRepeating(deadline: .now(), interval: .seconds(10) ,leeway:.milliseconds(40))
+        ViewController.timer1?.setEventHandler {
+            //该处设定要执行的事件，比如说要定时器控制的界面的刷新等等，记住，要用主线程刷新，不然会有延迟
+            self.findNewData(mainid:mainid)
+            timerCount += 1
+        }
+        // 启动时间源
+        ViewController.timer1?.resume()
+    }
+    
     // 取实时干燥数据
     func findNewData(mainid:Int)->Void{
         // 远程获得干燥记录数据
         let drymain = DataController(name: "DryData")
-        let condition = [["field":"mainid","value":mainid,"operator":"eq"]]
+        var lastId = 0
+        if let last = ViewController.temperatureDatas.lastObject as! Dictionary<String, Any>?{
+            lastId = last["id"] as! Int
+        }
+        let condition = [
+            ["field":"mainid","value":mainid,"operator":"eq"]
+            ,["field":"id","value":lastId,"operator":"gt"]
+        ]
         let param = ["filter": drymain.attributes(),"cond":condition] as [String : Any]
         Network.request(method: "GET", url: drymain.url(), params: param, success: {(result) in
+            if (result?.count)!>0{
+                let recs = drymain.recordToArray(records: result,eachRecord: {(item) in
+                    // 保存干燥曲线每个段的开始时间
+                    let mode = (item as AnyObject).value(forKey: "mode") as! Int
+                    if ViewController.currentLineNo != mode{
+                        let time = (item as AnyObject).value(forKey: "time")!
+                        ViewController.lineStartTime.append(time as! Int)
+                        ViewController.currentLineNo = mode
+                    }
+                    })
+
+                drymain.appendRecord(data: result)
+                ViewController.temperatureDatas.addObjects(from: recs)
+                
+                Draw.temperature(recs: ViewController.temperatureDatas)
+                self.showDryData(rec: recs.last as! Dictionary<String, Any>)
+                /*
+                //通知名称常量
+                let refresh = NSNotification.Name(rawValue:"refresh")
+                let noti = NSNotification(name: refresh, object: self, userInfo: ["value":"DryData"])
+                let notiCenter = NotificationCenter.default
+                // 先注册通知监听者
+                notiCenter.addObserver(self, selector: #selector(self.testNoti(noti:)), name: refresh, object: self)
+                
+                //延时2s
+                sleep(2)
+                // 发布通知
+                notiCenter.post(noti as Notification)//之前直接使用Notification就没有这样as来转换了
+ */
+            }
         }, failure: {(error) in
             print(error)
         })
     }
-    /*
-        Drydata.getNew mainid,(record,islast)=>
-            @setScrollBar()
-            if Drydata.findByAttribute('mainid',parseInt @item.drymains.id).eql record
-				@curDraw?.moveToPoint record
-				@curLine = record.mode
-				@curLineStartTemperature = record.settingtemperature
-				@maxSettingTemperature = record.settingtemperature
-				@maxTemperature =  record.temperature
-            else
-				@curDraw?.drawToPoint record
-				color = {'value':@maxTemperatureDiffColor}
-				if @_maxTemperatureDiff record,color
-                    @maxTemperatureDiffColor = color.value
-                    $(@dryDataEl).eq(1).text (record.settingtemperature >> 4).toString()
-                    $(@dryDataEl).eq(3).text (record.temperature >> 4).toString()
-                    $(@dryDataEl).eq(1).css 'background',@maxTemperatureDiffColor
-                    $(@dryDataEl).eq(3).css 'background',@maxTemperatureDiffColor
     
-            if @curLine isnt record.mode
-				@curLine = record.mode
-				@curLineStartTime = record.time
-            if islast
-				@showDryParam record
-				@item.drydatas = Drydata.findAllByAttribute 'mainid', parseInt @item.drymains.id
-    }
-    */
     func setButtonsEnabled(enabled:Bool)->Void{
         for i in 100...101{
             let btn = self.view.viewWithTag(i) as! UIButton
@@ -491,6 +519,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let t1 = t.popFirst()
         var currentLineno = 0
         ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll(eachRecord: {(item) in
+            // 保存干燥曲线每个段的开始时间
             let mode = (item as AnyObject).value(forKey: "mode") as! Int
             if currentLineno != mode{
                 let time = (item as AnyObject).value(forKey: "time")!

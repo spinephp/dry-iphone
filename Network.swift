@@ -79,10 +79,10 @@ class Network{
                 components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
             }
         } else if let array = value as? [Any] {
-            for value in array {
+            for (index,value) in array.enumerated() {
                 var key1:String
                 if let dictionary = value as? [String: Any] {
-                    key1 = "\(key)[0]"
+                    key1 = "\(key)[\(index)]"
                 }else{
                     key1 = "\(key)[]"
                 }
