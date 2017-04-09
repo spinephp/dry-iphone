@@ -304,42 +304,28 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         else if btnPicker.tag==101 {// 选择干燥记录
             var title:String?
             
+            //定时器取消，会销毁
+            ViewController.timer?.cancel()
+            ViewController.timer1?.cancel()
+            
             ViewController.temperatureDatas.removeAllObjects()
             DataController(name: "DryData").removeAll()
             
             if valuePicker<dryingRecord.count{
-                //定时器取消，会销毁
-                ViewController.timer?.cancel()
-                
                 let state=dryingRecord[valuePicker]["state"] as! Int
                 title = dryingRecord[valuePicker]["starttime"] as! String?
+                let id = Int(dryingRecord[valuePicker]["id"] as! String)
                 if state==0{// 正在干燥的记录
                     title = "🔥"+title!
+                    inTimeRequest(mainid: id!)
                 }else{// 已干燥的记录
                     title = "❄️"+title!
+                    findNewData(mainid: id!)
                 }
-                
-                // 显示等待信息
-                //ViewController.lbLoading = UILabel(frame: CGRect(x:300,y:200,width:200,height:50))
-                //ViewController.lbLoading.text = "Loading..."
-                //self.view.addSubview(ViewController.lbLoading)
-                
-                // 向服务器请求数据
-                let id = dryingRecord[valuePicker]["id"] as! String
-                findNewData(mainid: Int(id)!)
-                //DataController(name: "DryData").fetchDryData(mainid: dryingRecord[valuePicker]["id"] as! String,params: nil)
-            }else{
+             }else{
                 title = "🔥等待干燥开始..."
-                ViewController.timer = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
-                ViewController.timer?.scheduleRepeating(deadline: .now(), interval: .seconds(10) ,leeway:.milliseconds(40))
-                ViewController.timer?.setEventHandler {
-                    //该处设定要执行的事件，比如说要定时器控制的界面的刷新等等，记住，要用主线程刷新，不然会有延迟
-                    self.checkDryStart()
-                    timerCount += 1
-                }
-                // 启动时间源
-                ViewController.timer?.resume()
-            }
+                inTimeRequestMain()
+             }
             btnPicker.setTitle(title, for:.normal)
         }
         vmPicker.removeFromSuperview()
@@ -371,6 +357,22 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         })
     }
     
+    // 设置定时器，向服务器请求 DryMain 实时数据
+    func inTimeRequestMain()->Void{
+        ViewController.isWiatDry = true
+        
+        // 设置定时器，每10秒向服务器发请求一次
+        ViewController.timer = DispatchSource.makeTimerSource(flags: [], queue:DispatchQueue.global())
+        ViewController.timer?.scheduleRepeating(deadline: .now(), interval: .seconds(10) ,leeway:.milliseconds(40))
+        ViewController.timer?.setEventHandler {
+            //该处设定要执行的事件，比如说要定时器控制的界面的刷新等等，记住，要用主线程刷新，不然会有延迟
+            self.checkDryStart()
+            timerCount += 1
+        }
+        // 启动时间源
+        ViewController.timer?.resume()
+    }
+    
     // 设置定时器，向服务器请求 DryData 实时数据
     func inTimeRequest(mainid:Int)->Void{
         ViewController.isWiatDry = false
@@ -393,7 +395,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let drymain = DataController(name: "DryData")
         var lastId = 0
         if let last = ViewController.temperatureDatas.lastObject as! Dictionary<String, Any>?{
-            lastId = last["id"] as! Int
+            if let id = Int(last["id"] as! String){
+                lastId = id
+            }
         }
         let condition = [
             ["field":"mainid","value":mainid,"operator":"eq"]

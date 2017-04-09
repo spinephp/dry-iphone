@@ -253,65 +253,6 @@ class Draw{
         }
     }
     
-    /*
-     * 绘制网格线(画时间标尺)
-     * @param dx - int ,指定滚动棒位置
-     * @return void
-    static func drawRuleTime(dx:Int,rect:CGRect)->Void {
-        xSpace = 60 // 每像素10秒，10分钟=60个像素，画一短标尺
-        var interval = 6
-        @unit = 1
-        switch scale
-            case 1
-				xSpace = Draw.moveLayers[0].0.frame.width / 12
-				interval = 3
-				unit = 6
-    when 2
-				xSpace= Draw.moveLayers[0].0.frame.width / 12
-				interval = 3
-				unit = 12
-    when 3
-				@xSpace= Draw.moveLayers[0].0.frame.width / 12
-				interval = 3
-				@unit = 48
-    else
-				@xSpace = 60
-				interval = 6
-    y0 = @ruleTemperatureHeight
-    y1 = @ruleTemperatureHeight+5
-    @ctx.lineWidth = 1
-    i = 0
-    for sx in [@ruleTemperatureWidth...@ruleTimeWidth+@ruleTemperatureWidth+@offsetX] by @xSpace
-    #@ctx.beginPath()
-    linelen = 0
-    x = sx - @offsetX
-    unless i%(interval*@unit)
-				s = ""
-				linelen = 3
-				if i < 60
-    s += "0"
-				s +=  (i/6).toString()+":00"
-				@ctx.fillText s,x-15,y1+16 if x >= @ruleTemperatureWidth
-    if x >= @ruleTemperatureWidth
-				@ctx.beginPath()
-				@ctx.moveTo x ,y0
-				@ctx.lineTo x,y1+ linelen
-				@ctx.strokeStyle = "rgba(0,0,0,0.5)"
-				@ctx.stroke()
-    
-    @ctx.beginPath()
-    if i is 0
-				@ctx.moveTo sx,y0
-				@ctx.lineTo sx,0
-				@ctx.strokeStyle = "rgba(0,0,0,0.5)"
-    else
-				@ctx.moveTo x,y0
-				@ctx.lineTo x,0
-				@ctx.strokeStyle = "rgba(200,200,200,0.5)"
-    @ctx.stroke()
-    i+=@unit
-     */
-    
     // 画查看线
     static func drawSeeLine(x:CGFloat)->Int{
         Draw.moveLayers[2].1.move(to: CGPoint(x:x, y:Draw.moveLayers[2].0.frame.height-35))
@@ -334,6 +275,9 @@ class Draw{
     
     // 画温度线
     static func temperature(recs:NSMutableArray)->Void{
+        Draw.moveLayers[3].1.removeAllPoints()
+        Draw.moveLayers[4].1.removeAllPoints()
+        
         Draw.moveLayers[3].0.lineWidth = 1
         Draw.moveLayers[3].0.strokeColor = UIColor.red.cgColor
         Draw.moveLayers[4].0.lineWidth = 1
@@ -343,13 +287,14 @@ class Draw{
         var y:Int = 0
         var y1:Int = 0
         var firstDraw = true
-        
+        let sTime = scrollX*rote
+        let eTime = sTime+frameWidth*rote
         for rec in recs{
             let r = rec as! Dictionary<String, Any>
             let time = r["time"] as! Int
             
             // 如 time 在屏幕可视区域内，则绘制该点
-            if time>scrollX*rote && time<scrollX*rote+frameWidth*rote{
+            if time>sTime && time<eTime{
                 let t:Int = Int((r["temperature"] as! Int) >> 4)
                 let t1:Int = Int((r["settingtemperature"] as! Int) >> 4)
                 x = time/rote-scrollX+frameLeft
@@ -373,63 +318,4 @@ class Draw{
         Draw.moveLayers[4].0.path=Draw.moveLayers[4].1.cgPath
         Draw.view?.layer.addSublayer(Draw.moveLayers[4].0)
     }
-    
-   /*
-    func resize()->Void{
-        let h = 450
-        let w = $(@canvas).parent().width()
-    @canvas[0].width = w
-    @canvas[0].height = h
-    @canvas[1].width = w- 50
-    @canvas[1].height = h - 35
-    @ruleTemperatureHeight = h - @ruleTimeHeight
-    @ruleTimeWidth = w - @ruleTemperatureWidth
-    @ctx = @canvas[0].getContext "2d"
-    @ctxSee = @canvas[1].getContext "2d"
-    @ctx.width = @ctx.width
-    @drawRuleTemperature()
-    @drawRuleTime()
-    }
-
-calcCoord:(rec)->
-rote = @unit*60/@xSpace
-t = rec.temperature >> 4
-#x = (rec.time-@offsetX*@unit)/rote+@ruleTemperatureWidth
-x = rec.time/rote-@offsetX+@ruleTemperatureWidth
-y = @ruleTemperatureHeight-(t+50)*@space/10
-t = rec.settingtemperature >> 4
-y1 = @ruleTemperatureHeight-(t+50)*@space/10
-[x,y,y1]
-
-moveToPoint:(rec)->
-@current_point = @calcCoord rec
-
-_drawLine:(coord,whitch_line)->
-@ctx.beginPath()
-@ctx.moveTo @current_point[0],@current_point[whitch_line]
-@ctx.lineTo coord[0],coord[whitch_line]
-@ctx.strokeStyle = ["red","blue"][whitch_line-1]
-@ctx.stroke()
-
-drawToPoint:(rec)->
-@ctx.lineWidth = 1
-coord = @calcCoord rec
-@_drawLine coord,1
-@_drawLine coord,2
-@current_point = coord
-
-getScale:()->
-@unit
-
-setScale:(value)->
-@scale = parseInt value
-@resize()
-@
-
-setOffset:(value)->
-@offsetX = parseInt value
-@resize()
-@
-@current_point:[0,0,0]
- */
 }
