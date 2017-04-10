@@ -28,9 +28,16 @@ class DringTests: XCTestCase {
     func testProperty() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        XCTAssert(ViewController.isWiatDry==true)
+        XCTAssert(ViewController.temperatureDatas.count==0)
+        XCTAssert(ViewController.currentLineNo==0)
+        XCTAssert(ViewController.lineStartTime[0]==0)
+        
         XCTAssert(vc.dryingRecord.count==0)
-        XCTAssert(vc.scales==["默认","4 小时","8 小时","12 小时","24 小时","48 小时","96 小时"])
+        XCTAssert(vc.scales==["默认","20 分钟","30 分钟","1 小时","2 小时","3 小时","4 小时","5 小时","6 小时","7 小时","8 小时"])
         XCTAssert(vc.valuePicker==0)
+        XCTAssert(vc.scrollPos==0.0)
+        XCTAssert(vc.dryingRecord.count==0)
         
     }
     

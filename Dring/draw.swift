@@ -280,8 +280,10 @@ class Draw{
         
         Draw.moveLayers[3].0.lineWidth = 1
         Draw.moveLayers[3].0.strokeColor = UIColor.red.cgColor
+        Draw.moveLayers[3].0.fillColor=UIColor.clear.cgColor
         Draw.moveLayers[4].0.lineWidth = 1
         Draw.moveLayers[4].0.strokeColor = UIColor.blue.cgColor
+        Draw.moveLayers[4].0.fillColor=UIColor.clear.cgColor
         let rote = Draw.scales[Draw.scale]// * 60 / Draw.xSpace
         var x:Int = 0
         var y:Int = 0
