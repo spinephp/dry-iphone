@@ -533,8 +533,10 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             }
         }
         
-        // 最小二乘法
-        let least = LeastSquare(datas: ViewController.temperatureDatas)
+        // 最小二乘法,计算给定点的实际升温速度
+        let pos = ViewController.temperatureDatas.index(of: rec) as Int
+        let least = LeastSquare(datas: ViewController.temperatureDatas,current:pos)
+        
         var velocity:Float = 0.0
         var lineStatus = String(ViewController.lineEndTemperature[mode])
         if mode%2==0{

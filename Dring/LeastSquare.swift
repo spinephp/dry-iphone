@@ -11,14 +11,18 @@ import Foundation
 class LeastSquare{
     var a:Double = 0.0
     var b:Double = 0.0
-    init(datas:NSMutableArray)
+    init(datas:NSMutableArray,current:Int?)
     {
         var t1:Double=0, t2:Double=0,t3:Double=0, t4:Double=0
         var i = 0
-        if datas.count>50{
-            i =  datas.count-50
+        var len:Int = datas.count-1
+        if (current != nil){
+            len = current!
         }
-        for j in i..<datas.count{
+        if len>50{
+            i =  len-50
+        }
+        for j in i..<len{
             let r = datas[j] as! Dictionary<String, Any>
             let time = r["time"] as! UInt64
             let hour = Double(time)/360.0
@@ -28,7 +32,7 @@ class LeastSquare{
             t3 += hour*t
             t4 += t
         }
-        let count:Double = Double(datas.count)
+        let count:Double = Double(len-i)
         let m = Double(t1)*count - Double(t2*t2)
         a = (t3*count - Double(t2)*t4) / m
         //b = (t4 - a*t2) / x.size()
