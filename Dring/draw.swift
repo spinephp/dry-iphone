@@ -49,7 +49,7 @@ class Draw{
         self.view?.addGestureRecognizer(tapGR)
      }
     
-    //////手势处理函数
+    // 手势处理函数
     @objc func tapHandler(sender:UITapGestureRecognizer) {
         if (sender.numberOfTapsRequired == 1) {
             //单指单击
@@ -62,6 +62,14 @@ class Draw{
     
     /*
      * 在给定区域绘制字符串
+     * @param
+     *     x - CGFloat 类型，指定要绘制字符串的水平座标
+     *     y - CGFloat 类型，指定要绘制字符串的垂直座标
+     *     width - CGFloat 类型，指定要绘制字符串的宽度
+     *     height - CGFloat 类型，指定要绘制字符串的高度
+     *     s - String 类型，指定要绘制的字符串
+     * @return 
+     *     Void
      */
     static func text(x:CGFloat,y:CGFloat,width:CGFloat,height:CGFloat,s:String)->Void{
         let tLayer=CATextLayer()
@@ -77,7 +85,16 @@ class Draw{
     }
     
     /*
-     * 在给定区域绘制字符串
+     * 在给定层的指定区域绘制字符串
+     * @param
+     *     tLayer - CATextLayer 类型，指定字符串要绘制的层
+     *     x - CGFloat 类型，指定要绘制字符串的水平座标
+     *     y - CGFloat 类型，指定要绘制字符串的垂直座标
+     *     width - CGFloat 类型，指定要绘制字符串的宽度
+     *     height - CGFloat 类型，指定要绘制字符串的高度
+     *     s - String 类型，指定要绘制的字符串
+     * @return
+     *     Void
      */
     static func moveText(tLayer:CATextLayer,x:CGFloat,y:CGFloat,width:CGFloat,height:CGFloat,s:String)->Void{
         tLayer.frame=CGRect(x:x, y:y, width:width, height:height)
@@ -87,6 +104,14 @@ class Draw{
     
     /*
      * 画 frame 控件外框
+     * @param
+     *     x - CGFloat 类型，指定要绘制框架的水平座标
+     *     y - CGFloat 类型，指定要绘制框架的垂直座标
+     *     width - CGFloat 类型，指定要绘制框架的宽度
+     *     height - CGFloat 类型，指定要绘制框架的高度
+     *     stringWidth - CGFloat 类型，指定框架标题字符串的宽度
+     * @return
+     *     Void
      */
     static func frame(x:CGFloat,y:CGFloat,width:CGFloat,height:CGFloat,stringWidth:CGFloat)->Void{
         let layer=CAShapeLayer()
@@ -109,7 +134,13 @@ class Draw{
         Draw.view?.layer.addSublayer(layer)
     }
     
-    // 画水平线及座标(画温度标尺)
+    /*
+     * 画水平线及座标(画温度标尺)
+     * @param
+     *     rect - CGRect 类型，指定要绘制区域的矩形
+     * @return
+     *     Void
+     */
     static func vCoord(rect:CGRect)->Void{
         let layer:[(CAShapeLayer,UIBezierPath,CGFloat)]=[(CAShapeLayer(),UIBezierPath(),0.5),(CAShapeLayer(),UIBezierPath(),0.8)]
         for item in layer{
@@ -177,7 +208,7 @@ class Draw{
     }
     
     /*
-     * 绘制网格线(画时间标尺)
+     * 绘制网格垂直线及画时间标尺
      * @param dx - int ,指定滚动棒位置
      * @return void
      */
@@ -253,7 +284,11 @@ class Draw{
         }
     }
     
-    // 画查看线
+    /*
+     * 画查看线
+     * @param x - CGFloat ,指定要查看的时间位置
+     * @return Int 返回当前平移和缩放参数下的 x 坐标(时间)
+     */
     static func drawSeeLine(x:CGFloat)->Int{
         Draw.moveLayers[2].1.move(to: CGPoint(x:x, y:Draw.moveLayers[2].0.frame.height-35))
         Draw.moveLayers[2].1.addLine(to: CGPoint(x:x, y:0))
@@ -264,17 +299,25 @@ class Draw{
         let color:CGFloat = CGFloat(Draw.moveLayers[2].2)
         Draw.moveLayers[2].0.strokeColor=UIColor.init(red: color, green: color, blue: color, alpha: 1.0).cgColor
         Draw.view?.layer.addSublayer(Draw.moveLayers[2].0)
-        return Int((x-30+CGFloat(scrollX))*CGFloat(Draw.scales[Draw.scale])) // 返回当前平移和缩放参数下的 x 坐标(时间)
+        return Int((x-30+CGFloat(scrollX))*CGFloat(Draw.scales[Draw.scale]))
     }
     
-    // 擦查看线
+    /*
+     * 擦查看线
+     * @param x - CGFloat ,指定要查看的时间位置
+     * @return Void
+     */
     static func removeSeeLine(x:CGFloat)->Void{
         Draw.moveLayers[2].0.removeFromSuperlayer()
         Draw.moveLayers[2].1.removeAllPoints()
     }
     
-    // 画温度线
-    static func temperature(recs:NSMutableArray)->Void{
+    /*
+     * 画温度线
+     * @param recs - NSMutableArray ,指定温度等相关数据的数组
+     * @return Void
+     */
+   static func temperature(recs:NSMutableArray)->Void{
         Draw.moveLayers[3].1.removeAllPoints()
         Draw.moveLayers[4].1.removeAllPoints()
         

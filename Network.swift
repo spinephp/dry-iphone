@@ -14,6 +14,17 @@ extension NSNumber {
 
 class Network{
     
+    /*
+     * 向服务器发送请求
+     * @param
+     *     method - String 类型，指定请求方法
+     *     url - String 类型，指定请求路径
+     *     params - Dictionary<String, Any> 类型，指定请求参数
+     *     success - String 类型，指定成功调用后的回调函数
+     *     failure - String 类型，指定失败调用后的回调函数
+     * @return
+     *     Void
+     */
     static func request(method: String, url: String, params: Dictionary<String, Any> = Dictionary<String, Any>(),success:@escaping ((_ result:[[String:AnyObject]]?) -> ()),failure: @escaping ((_ error:Error) -> ())) {
         let session = URLSession.shared
         
@@ -59,7 +70,13 @@ class Network{
         task.resume()
     }
     
-    //请求体,并处理特殊字符串 !$&'()*+,;= :#[]@
+    /*
+     * 请求体,并处理特殊字符串 !$&'()*+,;= :#[]@
+     * @param
+     *     parameters - [String: Any] 类型，指定要处理参数数组
+     * @return
+     *     String, 参数处理后的编码串
+     */
     private func buildParams(_ parameters: [String: Any]) -> String {
         var components: [(String, String)] = []
         
@@ -71,6 +88,14 @@ class Network{
         return components.map { "\($0)=\($1)" }.joined(separator: "&")
     }
     
+    /*
+     * 转换参数键值对，为对应的串对数组
+     * @param
+     *     key - String 类型，指定要处理的键
+     *     value - Any 类型，指定要处理的值
+     * @return
+     *     [(String,String)] 处理后的键值编码数组
+     */
     public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
         var components: [(String, String)] = []
         
@@ -103,8 +128,13 @@ class Network{
         return components
     }
     
-    
-    
+    /*
+     * 对给定的串进行编码
+     * @param
+     *     string - String 类型，指定要处理的串
+     * @return
+     *     String 编码后的串
+     */
     public func escape(_ string: String) -> String {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="

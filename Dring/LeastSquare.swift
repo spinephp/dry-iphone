@@ -8,9 +8,19 @@
 
 import Foundation
 
+/*
+ * 最小二乘法计算升温速度
+ */
 class LeastSquare{
     var a:Double = 0.0
     var b:Double = 0.0
+
+    /*
+     * 类初始化函数
+     * @param
+     *     datas - NSMutableArray 类型，指定要处理的温度数据数组
+     *     current - Int? 类型，指定当前温度值的索引
+     */
     init(datas:NSMutableArray,current:Int?)
     {
         var t1:Double=0, t2:Double=0,t3:Double=0, t4:Double=0
@@ -39,11 +49,26 @@ class LeastSquare{
         b = (Double(t1)*t4 - Double(t2)*t3) / m
     }
     
+    /*
+     * 取指定点的温度值
+     * @param
+     *     x - Double 类型，指定时间值
+     *     current - Int? 类型，指定当前温度值的索引
+     * @return
+     *     Double, 温度值
+     */
     func getY(x:Double)->Double
     {
         return a*x + b
     }
     
+    /*
+     * 取速度
+     * @param
+     *     datas - NSMutableArray 类型，指定要处理的温度数据数组
+     * @return
+     *     Double, 速度值
+     */
     func getVelocity()->Double{
         return a
     }
