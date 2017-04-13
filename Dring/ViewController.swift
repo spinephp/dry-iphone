@@ -101,11 +101,12 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         viewBounds = CGRect(x:0,y:20,
                             width:UIScreen.main.bounds.width,
                             height:UIScreen.main.bounds.height-20)
+        let textY = UIScreen.main.bounds.height-57
         Draw.vCoord(rect: viewBounds)
         Draw.grad(dx:0,rect: viewBounds)
-        Draw.frame(x:6,y:viewBounds.midY+viewBounds.height-235,width:160,height:55,stringWidth:65)
-        Draw.frame(x:186,y:viewBounds.midY+viewBounds.height-235,width:200,height:55,stringWidth:35)
-        Draw.frame(x:407,y:viewBounds.midY+viewBounds.height-235,width:126,height:55,stringWidth:35)
+        Draw.frame(x:6,y:textY,width:160,height:55,stringWidth:65)
+        Draw.frame(x:186,y:textY,width:200,height:55,stringWidth:35)
+        Draw.frame(x:407,y:textY,width:126,height:55,stringWidth:35)
         
         scrollView = UIScrollView(frame:viewBounds)
         

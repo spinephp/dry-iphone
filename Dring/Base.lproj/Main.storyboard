@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -54,8 +54,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="⏱时间单位:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v4o-z5-D4M">
-                                <rect key="frame" x="510" y="9" width="99" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="⏱时间单位:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v4o-z5-D4M">
+                                <rect key="frame" x="510" y="22" width="99" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="99" id="3YD-15-Iwq"/>
                                     <constraint firstAttribute="height" constant="21" id="Xfi-8I-wN3"/>
@@ -255,7 +255,6 @@
                             <constraint firstItem="Uge-Wt-lPZ" firstAttribute="top" secondItem="BXv-fp-n4K" secondAttribute="bottom" id="1Om-Xc-iX4"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Uge-Wt-lPZ" secondAttribute="bottom" constant="3" id="1dR-b7-Ndb"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="y1O-MX-dtU" secondAttribute="bottom" constant="4" id="1tb-KM-uTJ"/>
-                            <constraint firstItem="aCq-Qt-pXO" firstAttribute="leading" secondItem="tUN-q9-SV8" secondAttribute="trailing" constant="209" id="246-fA-ud3"/>
                             <constraint firstItem="4YK-z1-ee3" firstAttribute="top" secondItem="7UN-gH-dgp" secondAttribute="bottom" id="4i9-QJ-Y8A"/>
                             <constraint firstItem="GuB-EY-hBh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="9" id="5Ez-Uv-0Zh"/>
                             <constraint firstItem="RqE-Sj-NRY" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="9" id="6L0-cJ-Hmz"/>
@@ -287,12 +286,13 @@
                             <constraint firstItem="y1O-MX-dtU" firstAttribute="leading" secondItem="GuB-EY-hBh" secondAttribute="trailing" id="UOm-tg-Jfs"/>
                             <constraint firstItem="OHa-j2-GBx" firstAttribute="top" secondItem="Xgn-vM-xbQ" secondAttribute="bottom" constant="1" id="V1H-VP-mXB"/>
                             <constraint firstItem="tUN-q9-SV8" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="-2" id="VxW-fk-dqe"/>
-                            <constraint firstItem="v4o-z5-D4M" firstAttribute="leading" secondItem="tUN-q9-SV8" secondAttribute="trailing" constant="110" id="au9-k0-2MP"/>
+                            <constraint firstAttribute="trailing" secondItem="aCq-Qt-pXO" secondAttribute="trailing" constant="1" id="cYQ-Q1-T1L"/>
                             <constraint firstItem="Xgn-vM-xbQ" firstAttribute="leading" secondItem="3nn-df-zye" secondAttribute="trailing" constant="180" id="cja-L1-QMw"/>
                             <constraint firstItem="Q7C-Mv-NaL" firstAttribute="leading" secondItem="z7F-AD-clO" secondAttribute="trailing" constant="1" id="coe-FA-G0b"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="z7F-AD-clO" secondAttribute="bottom" constant="3" id="dNf-yr-l4y"/>
                             <constraint firstItem="4YK-z1-ee3" firstAttribute="leading" secondItem="y1O-MX-dtU" secondAttribute="trailing" constant="13" id="ddK-Fj-97T"/>
                             <constraint firstItem="LZb-ao-3R2" firstAttribute="leading" secondItem="Q7C-Mv-NaL" secondAttribute="trailing" constant="70" id="eUG-hv-Cfq"/>
+                            <constraint firstItem="aCq-Qt-pXO" firstAttribute="leading" secondItem="v4o-z5-D4M" secondAttribute="trailing" id="eag-j4-yk1"/>
                             <constraint firstItem="7UN-gH-dgp" firstAttribute="leading" secondItem="lxF-pH-8il" secondAttribute="trailing" constant="13" id="fKD-U4-fKW"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="y1O-MX-dtU" secondAttribute="bottom" constant="4" id="fKK-lb-1Dr"/>
                             <constraint firstItem="4YK-z1-ee3" firstAttribute="top" secondItem="7UN-gH-dgp" secondAttribute="bottom" id="gsx-o0-WY3"/>
