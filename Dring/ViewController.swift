@@ -45,13 +45,28 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     static var lineStartTime:[Int] = [0]
     static var lineTime:[Int] = [0]
     static var lineEndTemperature:[Int] = [0]
-    
+    static var isPlaying:Bool = false
+    static var playingSoundID:UInt32 = 0
+
+    /**
+     * 取数据库上下文
+     * @param
+     *    none
+     * @return
+     *     NSManagedObjectContext，指定数据库上下文
+     */
     func getContext () -> NSManagedObjectContext {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
     }
     
-    //长按手势
+    /**
+     * 长按手势，绘制温度查看线
+     * @param
+     *    sender - UILongPressGestureRecognizer 类型，指定触发事件
+     * @return
+     *     none
+     */
     func handleLongpressGesture(sender : UILongPressGestureRecognizer){
         
         let point:CGPoint = sender.location(in: self.view)
@@ -104,9 +119,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let textY = UIScreen.main.bounds.height-57
         Draw.vCoord(rect: viewBounds)
         Draw.grad(dx:0,rect: viewBounds)
-        Draw.frame(x:6,y:textY,width:160,height:55,stringWidth:65)
-        Draw.frame(x:186,y:textY,width:200,height:55,stringWidth:35)
-        Draw.frame(x:407,y:textY,width:126,height:55,stringWidth:35)
+        Draw.frame(x:6,y:textY,width:132,height:55,stringWidth:65)
+        Draw.frame(x:144,y:textY,width:200,height:55,stringWidth:35)
+        Draw.frame(x:350,y:textY,width:126,height:55,stringWidth:35)
         
         scrollView = UIScrollView(frame:viewBounds)
         
@@ -492,6 +507,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let line_time = time - ViewController.lineStartTime[mode]
         var diff:String
         var audioName:String?
+        var soundID:SystemSoundID = 0
         ViewController.lbStatus?.backgroundColor = UIColor.green
         
         // 设置警告声音和颜色
@@ -499,38 +515,47 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             diff = "太高"
             ViewController.lbStatus?.backgroundColor = UIColor.red
             audioName = "alarm.caf"
+            soundID = 1005
         }else if tDiff < -48{
             ViewController.lbStatus?.backgroundColor = UIColor.red
             diff = "太低"
             audioName = "alarm.caf"
+            soundID = 1005
         }else if tDiff > 32{
             diff = "偏高"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
             audioName = "Bloom.caf"
+            soundID = 1106
         }else if tDiff < -32{
             diff = "偏低"
             ViewController.lbStatus?.backgroundColor = UIColor.yellow
             audioName = "Bloom.caf"
+            soundID = 1106
         }else{
             diff = "正常"
             audioName = nil
+            soundID = 0
         }
         
         // 起动多线程
         DispatchQueue.global().async {
-            // 播放音频
-            if let name = audioName {
-                //建立的SystemSoundID对象
-                var soundID:SystemSoundID = 0
-                //地址转换
-                if let fileUrl = Bundle.main.url(forResource:name,withExtension:nil){
-                    //赋值
-                    AudioServicesCreateSystemSoundID(fileUrl as CFURL, &soundID)
-                    //提醒（同上面唯一的一个区别）
-                    AudioServicesPlayAlertSound(soundID)
-                }
-                DispatchQueue.main.async {  //通知ui刷新
-                }
+            if ViewController.isPlaying==false{
+                ViewController.isPlaying = true
+                
+                //添加音频结束时的回调
+                AudioServicesAddSystemSoundCompletion (
+                    soundID,
+                    nil,
+                    nil,
+                    {
+                        (soundID: UInt32,inClientData: Optional<UnsafeMutableRawPointer>) in
+                        let delegate = unsafeBitCast(inClientData, to: AudioServicesPlaySystemSoundDelegate.self)
+                        delegate.audioServicesPlaySystemSoundCompleted(soundID: soundID)
+                    },
+                    UnsafeMutableRawPointer(mutating:  Unmanaged.passRetained(self).toOpaque())
+                )
+                //播放声音
+                AudioServicesPlaySystemSound(soundID)
             }
         }
         
@@ -539,7 +564,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let least = LeastSquare(datas: ViewController.temperatureDatas,current:pos)
         
         var velocity:Float = 0.0
-        var lineStatus = String(ViewController.lineEndTemperature[mode])
+        var lineStatus = String(ViewController.lineEndTemperature[mode])+"℃"
         if mode%2==0{
             velocity = Float(ViewController.lineTime[mode])
             if mode < ViewController.lineTime.count - 1{
@@ -561,6 +586,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", Float(tDiff)/16.0)
     }
     
+    func audioServicesPlaySystemSoundCompleted(soundID: SystemSoundID) {
+        ViewController.isPlaying = false
+        ViewController.playingSoundID = soundID
+        AudioServicesRemoveSystemSoundCompletion(soundID)
+        AudioServicesDisposeSystemSoundID(soundID)
+    }
+    
     // selector是这样的
     func testNoti(noti: Notification) {
         ViewController.lbLoading.removeFromSuperview()
@@ -580,5 +612,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         showDryData(rec: ViewController.temperatureDatas.lastObject as! Dictionary<String, Any>)
     }
     
+}
+
+@objc protocol AudioServicesPlaySystemSoundDelegate {
+    func audioServicesPlaySystemSoundCompleted(soundID: SystemSoundID)
 }
 

@@ -40,6 +40,13 @@ class Draw{
         //resize()
     }
     
+    /**
+     * 设置要绘制的视图
+     * @param
+     *     view - UIView 类型，指定要绘制视图
+     * @return
+     *     Void
+     */
     static func setDrawView(view:UIView)->Void{
         self.view = view
         let tapGR = UITapGestureRecognizer(target: self, action: #selector(tapHandler(sender:)))
@@ -49,7 +56,13 @@ class Draw{
         self.view?.addGestureRecognizer(tapGR)
      }
     
-    // 手势处理函数
+    /**
+     * 手势处理函数
+     * @param
+     *     sender - UITapGestureRecognizer 类型，指定手势触发者
+     * @return
+     *     Void
+     */
     @objc func tapHandler(sender:UITapGestureRecognizer) {
         if (sender.numberOfTapsRequired == 1) {
             //单指单击
@@ -60,7 +73,7 @@ class Draw{
         }
     }
     
-    /*
+    /**
      * 在给定区域绘制字符串
      * @param
      *     x - CGFloat 类型，指定要绘制字符串的水平座标
@@ -84,7 +97,7 @@ class Draw{
         Draw.view?.layer.addSublayer(tLayer)
     }
     
-    /*
+    /**
      * 在给定层的指定区域绘制字符串
      * @param
      *     tLayer - CATextLayer 类型，指定字符串要绘制的层
@@ -102,7 +115,7 @@ class Draw{
         Draw.view?.layer.addSublayer(tLayer)
     }
     
-    /*
+    /**
      * 画 frame 控件外框
      * @param
      *     x - CGFloat 类型，指定要绘制框架的水平座标
@@ -134,7 +147,7 @@ class Draw{
         Draw.view?.layer.addSublayer(layer)
     }
     
-    /*
+    /**
      * 画水平线及座标(画温度标尺)
      * @param
      *     rect - CGRect 类型，指定要绘制区域的矩形
@@ -207,7 +220,7 @@ class Draw{
         }
     }
     
-    /*
+    /**
      * 绘制网格垂直线及画时间标尺
      * @param dx - int ,指定滚动棒位置
      * @return void
@@ -284,7 +297,7 @@ class Draw{
         }
     }
     
-    /*
+    /**
      * 画查看线
      * @param x - CGFloat ,指定要查看的时间位置
      * @return Int 返回当前平移和缩放参数下的 x 坐标(时间)
@@ -302,7 +315,7 @@ class Draw{
         return Int((x-30+CGFloat(scrollX))*CGFloat(Draw.scales[Draw.scale]))
     }
     
-    /*
+    /**
      * 擦查看线
      * @param x - CGFloat ,指定要查看的时间位置
      * @return Void
@@ -312,7 +325,7 @@ class Draw{
         Draw.moveLayers[2].1.removeAllPoints()
     }
     
-    /*
+    /**
      * 画温度线
      * @param recs - NSMutableArray ,指定温度等相关数据的数组
      * @return Void

@@ -14,7 +14,7 @@ extension NSNumber {
 
 class Network{
     
-    /*
+    /**
      * 向服务器发送请求
      * @param
      *     method - String 类型，指定请求方法
@@ -70,7 +70,7 @@ class Network{
         task.resume()
     }
     
-    /*
+    /**
      * 请求体,并处理特殊字符串 !$&'()*+,;= :#[]@
      * @param
      *     parameters - [String: Any] 类型，指定要处理参数数组
@@ -88,7 +88,7 @@ class Network{
         return components.map { "\($0)=\($1)" }.joined(separator: "&")
     }
     
-    /*
+    /**
      * 转换参数键值对，为对应的串对数组
      * @param
      *     key - String 类型，指定要处理的键
@@ -128,7 +128,7 @@ class Network{
         return components
     }
     
-    /*
+    /**
      * 对给定的串进行编码
      * @param
      *     string - String 类型，指定要处理的串

@@ -15,10 +15,24 @@ class DataController: NSObject {
         self.name = name
     }
     
+    /**
+     * 取 url
+     * @param
+     *     none
+     * @return
+     *     String, url
+     */
     func url()->String{
         return "http://www.yrr8.com/woo/index.php?cmd=\(self.name)"
     }
     
+    /**
+     * 添加新记录
+     * @param
+     *     data - [[String:AnyObject]]? 类型, 存储数据库记录的键值对的数组
+     * @return
+     *     Void
+     */
     func newRecord(data:[[String:AnyObject]]?)->Void{
         //获取管理的数据上下文 对象
         let context = ViewController().getContext()
@@ -46,6 +60,13 @@ class DataController: NSObject {
         //AppDelegate().saveContext ()
     }
     
+    /**
+     * 向表尾添加新记录
+     * @param
+     *     data - [[String:AnyObject]]? 类型, 存储数据库记录的键值对的数组
+     * @return
+     *     Void
+     */
     func appendRecord(data:[[String:AnyObject]]?)->Void{
         //对象赋值
         for item in data!{
@@ -74,7 +95,13 @@ class DataController: NSObject {
         }
     }
     
-    // 取数据库实体属性
+    /**
+     * 取数据库实体的所有属性
+     * @param
+     *     none
+     * @return
+     *     [String] - 串数组，由表属性名组成的字符串数组
+     */
     func attributes()->[String]{
         let context = ViewController().getContext()
         let entity = NSEntityDescription.entity(forEntityName: self.name, in: context)
@@ -86,6 +113,13 @@ class DataController: NSObject {
     }
     
     
+    /**
+     * 取数据库实体的所有记录
+     * @param
+     *     none
+     * @return
+     *     Void
+     */
     func removeAll()-> Void {
         //let fetchRequest = NSFetchRequest<DryData>(entityName: self.name)
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: self.name)
@@ -182,16 +216,23 @@ class DataController: NSObject {
         return model
     }
     
+    /**
+     * 向远程服务器请求数据
+     * @param params - [String: Any]! 类型，指定要请求数据条件和内容
+     * @return true
+     */
     func fetch(params:[String: Any]!) -> Bool{
         var p:[String: Any]! = params
         if p == nil{
             p = ["filter": self.attributes(),"token": ""]
         }
-        Network.request(method: "GET", url: self.url(), params: p as Dictionary<String, AnyObject>, success: {(result) in
-            self.appendRecord(data: result)
-        }, failure: {(error) in
-            print(error)
-        })
+        Network.request(
+            method: "GET",
+            url: self.url(),
+            params: p as Dictionary<String, AnyObject>,
+            success: {(result) in self.appendRecord(data: result)},
+            failure: {(error) in print(error)}
+        )
         return true
     }
 }

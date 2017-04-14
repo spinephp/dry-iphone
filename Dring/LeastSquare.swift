@@ -15,7 +15,7 @@ class LeastSquare{
     var a:Double = 0.0
     var b:Double = 0.0
 
-    /*
+    /**
      * 类初始化函数
      * @param
      *     datas - NSMutableArray 类型，指定要处理的温度数据数组
@@ -49,7 +49,7 @@ class LeastSquare{
         b = (Double(t1)*t4 - Double(t2)*t3) / m
     }
     
-    /*
+    /**
      * 取指定点的温度值
      * @param
      *     x - Double 类型，指定时间值
@@ -62,7 +62,7 @@ class LeastSquare{
         return a*x + b
     }
     
-    /*
+    /**
      * 取速度
      * @param
      *     datas - NSMutableArray 类型，指定要处理的温度数据数组
