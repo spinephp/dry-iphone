@@ -167,7 +167,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         // Dispose of any resources that can be recreated.
     }
     
-    // 创建一个选择框
+    /**
+     * 创建一个选择框
+     * @param
+     *    title - UString 类型，指定标题
+     * @return
+     *     Void
+     */
     func createPickerview(title:String) -> Void {
         vmPicker = UIView(frame: CGRect(x:0, y:0, width:300, height:200))
         vmPicker.center = self.view.center
@@ -212,7 +218,14 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         self.view.addSubview(vmPicker)
     }
     
-    //
+    /**
+     * 根据指定的按键和标题，创建一个选择框
+     * @param
+     *    btn - UIButton 类型，指定触发的按键
+     *    title - UString 类型，指定标题
+     * @return
+     *     Void
+     */
     func createPickByBtn(btn:UIButton,title:String)->Void{
         btnPicker = btn
         if btn.isEnabled{
@@ -221,22 +234,47 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
     }
     
-    // 缩放按键 touch up inside 事件处理程序
+    /**
+     * 时间单位按键 touch up inside 事件处理程序
+     * @param
+     *    title - UString 类型，指定标题
+     * @return
+     *     Void
+     */
     @IBAction func scale(_ sender: UIButton) {
         createPickByBtn(btn:sender,title:"设置时间单位")
     }
     
-    // 干燥曲线按键 touch up inside 事件处理程序
+    /**
+     * 干燥曲线按键 touch up inside 事件处理程序
+     * @param
+     *    sender - UIButton 类型，指定触发的按键
+     * @return
+     *     Void
+     */
     @IBAction func dryingDate(_ sender: UIButton) {
         createPickByBtn(btn:sender,title:"选择干燥记录")
     }
     
-    //设置选择框的列数为1列,继承于UIPickerViewDataSource协议
+    /**
+     * 设置选择框的列数为1列,继承于UIPickerViewDataSource协议
+     * @param
+     *    pickerView - UIPickerView 类型，指定选择框
+     * @return
+     *     Int, 指定选择框的列数
+     */
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
-    //设置选择框的行数，继承于UIPickerViewDataSource协议
+    /**
+     * 设置选择框的行数,继承于UIPickerViewDataSource协议
+     * @param
+     *    pickerView - UIPickerView 类型，指定选择框
+     *    component - Int 类型，指定组件行数
+     * @return
+     *     Int, 指定选择框的行数
+     */
     func pickerView(_ pickerView: UIPickerView,
                     numberOfRowsInComponent component: Int) -> Int {
         var result = 0
@@ -252,7 +290,15 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         return result
     }
     
-    //设置选择框各选项的内容，继承于UIPickerViewDelegate协议
+    /**
+     * 设置选择框各选项的内容,继承于UIPickerViewDataSource协议
+     * @param
+     *    pickerView - UIPickerView 类型，指定选择框
+     *    component - Int 类型，指定组件行数
+     *    row - Int 类型，指定选择框行的索引
+     * @return
+     *     String?, 包含选择框对应行索引 row 的字符串
+     */
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int,
                     forComponent component: Int) -> String? {
         var result:String?
@@ -281,10 +327,16 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         return result
     }
     
+    /**
+     * 当用户滚动或拖动时触发,继承于UIScrollViewDelegate协议
+     * 画时间座标轴相关内容和温度线
+     * @param
+     *    scrollView - UIPickerView 类型，指定滚动框
+     * @return
+     *     Void
+     */
     func scrollViewDidScroll(_ scrollView:UIScrollView){
-        /* 当用户滚动或拖动时触发 */
         drawTimeAndTemperature()
-       //scrgollStartPoint = UIEvent.tou mouseLocation()
     }
     
     func scrollViewDidEndDecelerating(_ scrollView:UIScrollView){
@@ -301,7 +353,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         //drawGrad(dx:Int(scrollPos),rect: viewBounds)
     }
     
-    // 重画时间线、时间单位值和温度曲线
+    /**
+     * 画时间座标轴相关内容和温度线
+     * @param
+     *    none
+     * @return
+     *     Void
+     */
     func drawTimeAndTemperature()->Void{
         Draw.grad(dx:Int(scrollView.contentOffset.x),rect: viewBounds)
         if ViewController.temperatureDatas.count>0{
@@ -309,7 +367,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
     }
     
-    // 触摸选择框"确定"按钮事件处理程序
+    /**
+     * 触摸选择框"确定"按钮事件处理程序
+     * @param
+     *    sender - UIButton 类型，指定近按键
+     * @return
+     *     Void
+     */
     func getPickerViewValue(sender:UIButton){
         valuePicker = pickerView.selectedRow(inComponent: 0)
         if btnPicker.tag == 100{ // 选择缩放
@@ -354,7 +418,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         setButtonsEnabled(enabled:true)
     }
     
-    // 实时等待干燥开始
+    /**
+     * 实时等待干燥开始
+     * @param
+     *    none
+     * @return
+     *     Void
+     */
     func checkDryStart()->Void{
         // 远程获得干燥记录数据
         let drymain = DataController(name: "DryMain")
@@ -381,7 +451,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         })
     }
     
-    //
+    /**
+     * 从远端服务器，取设定干燥曲线
+     * @param
+     *    lineno - Int  类型，指定干燥曲线的曲线号
+     * @return
+     *     Void
+     */
     func getDryLine(lineno:Int)->Void{
         // 远程获得干燥记录数据
         let drymain = DataController(name: "DryLine")
@@ -401,7 +477,14 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             print(error)
         })
     }
-    // 设置定时器，向服务器请求 DryMain 实时数据
+
+    /**
+     * 设置定时器，向服务器请求 DryMain 实时数据（干燥未开始情况下）
+     * @param
+     *    none
+     * @return
+     *     Void
+     */
     func inTimeRequestMain()->Void{
         ViewController.isWiatDry = true
         
@@ -417,7 +500,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.timer?.resume()
     }
     
-    // 设置定时器，向服务器请求 DryData 实时数据
+    /**
+     * 设置定时器，向服务器请求 DryData 实时数据（干燥已开始）
+     * @param
+     *    mainid - Int 类型，指定表 DryData 中 mainid 字段值，返回记录的 mainid 字段必须等于该值
+     * @return
+     *     Void
+     */
     func inTimeRequest(mainid:Int)->Void{
         ViewController.isWiatDry = false
         
@@ -433,7 +522,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.timer1?.resume()
     }
     
-    // 取实时干燥数据
+    /**
+     * 取实时干燥数据
+     * @param
+     *    mainid - Int 类型，指定表 DryData 中 mainid 字段值，返回记录的 mainid 字段必须等于该值
+     * @return
+     *     Void
+     */
     func findNewData(mainid:Int)->Void{
         // 远程获得干燥记录数据
         let drymain = DataController(name: "DryData")
@@ -465,25 +560,19 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
                 
                 Draw.temperature(recs: ViewController.temperatureDatas)
                 self.showDryData(rec: recs.last as! Dictionary<String, Any>)
-                /*
-                //通知名称常量
-                let refresh = NSNotification.Name(rawValue:"refresh")
-                let noti = NSNotification(name: refresh, object: self, userInfo: ["value":"DryData"])
-                let notiCenter = NotificationCenter.default
-                // 先注册通知监听者
-                notiCenter.addObserver(self, selector: #selector(self.testNoti(noti:)), name: refresh, object: self)
-                
-                //延时2s
-                sleep(2)
-                // 发布通知
-                notiCenter.post(noti as Notification)//之前直接使用Notification就没有这样as来转换了
- */
             }
         }, failure: {(error) in
             print(error)
         })
     }
     
+    /**
+     * 设置干燥记录和时间单位按键使能状态
+     * @param
+     *    enabled - Bool 类型，指定要设置的按键状态
+     * @return
+     *     Void
+     */
     func setButtonsEnabled(enabled:Bool)->Void{
         for i in 100...101{
             let btn = self.view.viewWithTag(i) as! UIButton
@@ -491,13 +580,25 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
     }
     
-    //触摸选择框"取消"按钮事件处理程序
+    /**
+     * 触摸选择框"取消"按钮事件处理程序
+     * @param
+     *    sender - UIButton 类型，指定按键
+     * @return
+     *     Void
+     */
     func cancelPickerViewValue(sender:UIButton){
         vmPicker.removeFromSuperview()
         setButtonsEnabled(enabled:true)
     }
 
-    // 显示干燥数据
+    /**
+     * 显示干燥数据
+     * @param
+     *    rec - Dictionary<String, Any> 类型，指定要显示的记录
+     * @return
+     *     Void
+     */
     func showDryData(rec:Dictionary<String, Any>)->Void{
         let time = rec["time"] as! Int
         let tm = rec["temperature"] as! Int
@@ -586,6 +687,13 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         ViewController.lbStatus?.text = String(format: "温差 %.1f℃, \(diff)", Float(tDiff)/16.0)
     }
     
+    /**
+     * 声音播放完毕回调处理函数
+     * @param
+     *    soundID - SystemSoundID 类型，指定播放的声音
+     * @return
+     *     Void
+     */
     func audioServicesPlaySystemSoundCompleted(soundID: SystemSoundID) {
         ViewController.isPlaying = false
         ViewController.playingSoundID = soundID
@@ -593,27 +701,11 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         AudioServicesDisposeSystemSoundID(soundID)
     }
     
-    // selector是这样的
-    func testNoti(noti: Notification) {
-        ViewController.lbLoading.removeFromSuperview()
-        var t = noti.userInfo!
-        let t1 = t.popFirst()
-        var currentLineno = 0
-        ViewController.temperatureDatas = DataController(name:t1?.value as! String).findAll(eachRecord: {(item) in
-            // 保存干燥曲线每个段的开始时间
-            let mode = (item as AnyObject).value(forKey: "mode") as! Int
-            if currentLineno != mode{
-                let time = (item as AnyObject).value(forKey: "time")!
-                ViewController.lineStartTime.append(time as! Int)
-                currentLineno = mode
-            }
-            })
-        Draw.temperature(recs: ViewController.temperatureDatas)
-        showDryData(rec: ViewController.temperatureDatas.lastObject as! Dictionary<String, Any>)
-    }
-    
 }
 
+/**
+ * 声音播放完毕回调处理代理协议
+ */
 @objc protocol AudioServicesPlaySystemSoundDelegate {
     func audioServicesPlaySystemSoundCompleted(soundID: SystemSoundID)
 }
